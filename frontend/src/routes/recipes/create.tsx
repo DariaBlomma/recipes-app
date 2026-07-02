@@ -1,14 +1,14 @@
 import {createFileRoute} from '@tanstack/react-router'
-import { RecipesListView } from "../../recipes/views/list/RecipesListView.tsx";
+import {RecipesForm} from "@/recipes/widgets/form/RecipesForm.tsx";
 
-export const Route = createFileRoute('/recipes/')({
+export const Route = createFileRoute('/recipes/create')({
     component: RouteComponent,
 })
 
 function RouteComponent() {
     return (
         <div>
-            <RecipesListView />
+            <RecipesForm />
         </div>
     )
 }

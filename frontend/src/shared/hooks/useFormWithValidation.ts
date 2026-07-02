@@ -25,7 +25,7 @@ export function useFormWithValidation<T extends FieldValues>(
     const { initialValues, validationSchema } = options;
 
     const form = useForm<T>({
-        defaultValues: initialValues,
+        defaultValues: initialValues as DefaultValues<T>,
         mode: 'onTouched',
     });
 
@@ -35,6 +35,7 @@ export function useFormWithValidation<T extends FieldValues>(
     const getField = <K extends Path<T>>(name: K) => {
         const rules = validationSchema?.[name] as RegisterOptions<T, K> | undefined;
         const fieldError = errors[name]?.message as string | undefined;
+        // @ts-ignore
         const isFieldTouched = touchedFields[name];
         const error = (isFieldTouched || submitted) ? fieldError : undefined;
 

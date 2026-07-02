@@ -7,6 +7,16 @@ export function RecipesList(): JSX.Element{
         <div className={styles.list}>
             <RecipesCard/>
             <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
+            <RecipesCard/>
         </div>
     )
 }
