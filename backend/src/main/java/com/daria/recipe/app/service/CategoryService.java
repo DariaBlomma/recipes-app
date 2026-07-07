@@ -5,6 +5,7 @@ import com.daria.recipe.app.dto.category.CategoryPageResponse;
 import com.daria.recipe.app.dto.category.CategoryResponse;
 import com.daria.recipe.app.dto.category.CategoryUpdateRequest;
 import com.daria.recipe.app.entity.Category;
+import com.daria.recipe.app.entity.User;
 import com.daria.recipe.app.exception.ConflictException;
 import com.daria.recipe.app.exception.InvalidRequestException;
 import com.daria.recipe.app.exception.ResourceNotFoundException;
@@ -44,10 +45,11 @@ public class CategoryService {
         if (categoryRepository.existsByName(request.getName())) {
             throw new ConflictException("Category with such name already exists" + request.getName());
         }
-        userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found with id: " + userId));
-        Category category = categoryRepository.save(categoryMapper.toEntity(request));
-        return categoryMapper.toResponse(category);
+        User user = userRepository.getReferenceById(userId);
+        Category category = categoryMapper.toEntity(request);
+        category.setUser(user);
+        Category saved = categoryRepository.save(category);
+        return categoryMapper.toResponse(saved);
     }
 
     @Transactional(readOnly = true)

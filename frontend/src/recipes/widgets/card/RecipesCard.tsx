@@ -1,13 +1,14 @@
 import styles from "./RecipesCard.module.scss"
+import type {RecipeSchema} from "@/recipes/types";
 
-export function RecipesCard () {
+type Props = Omit<RecipeSchema, "id">
+export function RecipesCard ({ description, name, externalLink } : Props) {
     return (
         <div className={styles.card}>
-            <h3 className={styles.title}>Recipe title</h3>
-            <p className={styles.description}>Some
-            description in several lines
-            </p>
-            <a href="#">External link</a>
+            <h3 className={styles.title}>{ name }</h3>
+            <p className={styles.description}>{ description }</p>
+            <a href={externalLink}>External link</a>
+            {/*todo: display categories?*/}
             <div className={styles.tags}>
                 <div className={styles.tag}>Tag 1</div>
                 <div className={styles.tag}>Tag 2</div>

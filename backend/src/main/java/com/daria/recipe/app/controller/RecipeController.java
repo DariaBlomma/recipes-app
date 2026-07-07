@@ -36,7 +36,7 @@ public class RecipeController {
         return recipeService.getOne(recipeId);
     }
 
-    @GetMapping("/{categoryId}")
+    @GetMapping("/list/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     public Page<RecipeResponse> getList(
             @PathVariable("categoryId") Long categoryId,

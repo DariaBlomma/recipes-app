@@ -16,6 +16,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CategoryMapper {
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
     Category toEntity(CategoryCreateRequest request);
 
     @Mapping(source = "recipes", target = "recipeIds")
