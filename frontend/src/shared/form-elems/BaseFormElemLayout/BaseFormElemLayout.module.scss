@@ -1,0 +1,26 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field_dark {
+  .label {
+    color: white;
+  }
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.requiredStar {
+  color: #dc2626;
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 13px;
+}

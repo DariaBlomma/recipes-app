@@ -23,6 +23,7 @@ export function AuthSignUpForm(): JSX.Element {
                 <h2 className={styles.title}>Зарегистрироваться</h2>
 
                 <BaseInput
+                    id="name"
                     label={"Имя пользователя"}
                     placeholder={"Имя пользователя"}
                     type={"text"}
@@ -30,6 +31,7 @@ export function AuthSignUpForm(): JSX.Element {
                     {...fields.userName.props}
                 />
                 <BaseInput
+                    id="email"
                     label={"Email"}
                     placeholder="Введите email"
                     type={"email"}
@@ -38,6 +40,7 @@ export function AuthSignUpForm(): JSX.Element {
                 />
 
                 <BaseInputPassword
+                    id="password"
                     label={"Пароль"}
                     placeholder="Введите пароль"
                     required={true}

@@ -1,7 +1,8 @@
 import type {BaseGetListParams} from "@/shared/form-elems/types";
 
-export interface RecipeFormData extends Omit<RecipeSchema, "userId" | "id">  {
+export interface RecipeFormData extends Omit<RecipeSchema, "userId" | "id" | "categoryId">  {
     id?: number;
+    categoryId?: number | undefined;
 }
 
 export interface RecipesGetListParams extends BaseGetListParams{

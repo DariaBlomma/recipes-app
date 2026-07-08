@@ -5,6 +5,7 @@ import type { CategorySchema } from '@/categories/types';
 interface CategoriesSingleSelectProps {
     value: number | undefined;
     onChange: (id: number | undefined) => void;
+    onBlur?: () => void;
     categories: CategorySchema[];
     placeholder?: string;
     isLoading?: boolean;
@@ -14,6 +15,7 @@ interface CategoriesSingleSelectProps {
 export function CategoriesSingleSelect({
        value,
        onChange,
+        onBlur,
        categories,
        placeholder = 'Выберите категорию',
        isLoading = false,
@@ -36,6 +38,7 @@ export function CategoriesSingleSelect({
         <Select
             value={selectedOption}
             onChange={handleChange}
+            onBlur={onBlur}
             options={options}
             placeholder={placeholder}
             isLoading={isLoading}

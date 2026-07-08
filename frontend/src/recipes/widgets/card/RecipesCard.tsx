@@ -8,11 +8,11 @@ export function RecipesCard ({ description, name, externalLink } : Props) {
             <h3 className={styles.title}>{ name }</h3>
             <p className={styles.description}>{ description }</p>
             <a href={externalLink}>External link</a>
-            {/*todo: display categories?*/}
-            <div className={styles.tags}>
-                <div className={styles.tag}>Tag 1</div>
-                <div className={styles.tag}>Tag 2</div>
-            </div>
+            {/*todo: left for future/ Maybe categories, or ingeredients*/}
+            {/*<div className={styles.tags}>*/}
+            {/*    <div className={styles.tag}>Tag 1</div>*/}
+            {/*    <div className={styles.tag}>Tag 2</div>*/}
+            {/*</div>*/}
             <div className={styles.footer}>
                 <div className={[styles.actionBtn, styles.edit].join(' ')}>Edit</div>
                 <div className={[styles.actionBtn, styles.delete].join(' ')}>Delete</div>

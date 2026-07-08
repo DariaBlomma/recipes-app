@@ -2,13 +2,8 @@ import {
     useForm, type FieldValues, type Path, type RegisterOptions,
     type DefaultValues
 } from 'react-hook-form';
-import { useState, type InputHTMLAttributes } from 'react';
+import { useState} from 'react';
 
-interface ValidationProps {
-    error?: string;
-    'aria-invalid'?: boolean;
-    'aria-describedby'?: string;
-}
 
 type ValidationSchema<T extends FieldValues> = {
     [K in keyof T]?: RegisterOptions<T, Path<T>>;
@@ -39,7 +34,7 @@ export function useFormWithValidation<T extends FieldValues>(
         const isFieldTouched = touchedFields[name];
         const error = (isFieldTouched || submitted) ? fieldError : undefined;
 
-        const props: InputHTMLAttributes<HTMLInputElement> & ValidationProps = {
+        const props = {
             ...form.register(name, rules),
             'aria-invalid': !!error,
             'aria-describedby': error ? `${name}-error` : undefined,
@@ -85,5 +80,6 @@ export function useFormWithValidation<T extends FieldValues>(
         errors,
         handleSubmit: form.handleSubmit,
         watch: form.watch,
+        control: form.control,
     };
 }
