@@ -1,11 +1,16 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import {RecipesService} from "@/recipes/services/RecipesService.ts";
+import type {RecipesGetListParams} from "@/recipes/types";
 
-export function useRecipes(categoryId: number) {
+export function useRecipes(categoryId: number | undefined) {
     const query = useInfiniteQuery({
         queryKey: ['recipes-by-category', categoryId],
         queryFn: async ({ pageParam = 0 }) => {
-            const response = await RecipesService.getList({ page: pageParam, size: 10, categoryId });
+            const params: RecipesGetListParams = { page: pageParam, size: 10 };
+            if (categoryId) {
+                params.categoryId = categoryId;
+            }
+            const response = await RecipesService.getList(params);
             return {
                 data: response.content,
                 totalElements: response.totalElements,

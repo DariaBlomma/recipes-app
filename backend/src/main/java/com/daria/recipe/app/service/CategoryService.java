@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -60,11 +61,19 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CategoryPageResponse> getList(Long userId, Pageable pageable) {
+    public Page<CategoryPageResponse> getListPaginated(Long userId, Pageable pageable) {
         pageableHelper.validateSortFields(pageable.getSort(), ALLOWED_SORT_FIELDS);
         Pageable stablePageable = pageableHelper.addFallbackSort(pageable);
         Page<Category> categoryPage = categoryRepository.findAllActivePaginatedForUser(userId,  stablePageable);
         return categoryPage.map(categoryMapper::toPageResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> getList(Long userId) {
+        return categoryRepository.findAllActiveForUser(userId)
+                .stream()
+                .map(categoryMapper::toResponse)
+                .toList();
     }
 
     @Transactional

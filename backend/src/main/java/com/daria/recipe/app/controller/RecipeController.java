@@ -36,10 +36,10 @@ public class RecipeController {
         return recipeService.getOne(recipeId);
     }
 
-    @GetMapping("/list/{categoryId}")
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public Page<RecipeResponse> getList(
-            @PathVariable("categoryId") Long categoryId,
+            @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.DESC)
             Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails userDetails

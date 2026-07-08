@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -36,14 +37,20 @@ public class CategoryController {
         return categoryService.getOne(categoryId);
     }
 
-    @GetMapping
+    @GetMapping("/paginated")
     @ResponseStatus(HttpStatus.OK)
-    public Page<CategoryPageResponse> getList(
+    public Page<CategoryPageResponse> getListPaginated(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.DESC)
             Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return categoryService.getList(userDetails.getId(), pageable);
+        return categoryService.getListPaginated(userDetails.getId(), pageable);
+    }
+
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public List<CategoryResponse> getList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return categoryService.getList(userDetails.getId());
     }
 
     @PutMapping("/{id}")

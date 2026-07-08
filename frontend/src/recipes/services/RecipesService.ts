@@ -4,7 +4,7 @@ import type {PageDto} from "@/shared/form-elems/types";
 
 export class RecipesService {
     static async getList(data: RecipesGetListParams) {
-        const response = await api.get<PageDto<RecipeSchema>>(`/recipes/list/${data.categoryId}`, { params: data } );
+        const response = await api.get<PageDto<RecipeSchema>>(`/recipes`, { params: data } );
         return response.data;
     }
 

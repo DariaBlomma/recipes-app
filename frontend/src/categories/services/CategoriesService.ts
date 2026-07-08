@@ -4,8 +4,13 @@ import type {CategoryPage, CategorySchema} from "@/categories/types";
 
 const baseUrl = "categories"
 export class CategoriesService {
-    static async getList(data: BaseGetListParams) {
-        const response = await api.get<PageDto<CategoryPage>>(`/${baseUrl}`, { params: data } );
+    static async getListPaginated(data: BaseGetListParams) {
+        const response = await api.get<PageDto<CategoryPage>>(`/${baseUrl}/paginated`, { params: data } );
+        return response.data;
+    }
+
+    static async getList() {
+        const response = await api.get<CategorySchema[]>(`/${baseUrl}`);
         return response.data;
     }
 

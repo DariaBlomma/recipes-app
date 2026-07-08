@@ -30,6 +30,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
                               @Param("newCategoryId") Long newCategoryId);
 
 
-    @Query("SELECT r FROM Recipe r WHERE r.user.id = :userId AND r.category.id = :categoryId AND r.deletedAt IS NULL")
+    @Query("SELECT r FROM Recipe r WHERE r.user.id = :userId AND (:categoryId IS NULL OR r.category.id = :categoryId) AND r.deletedAt IS NULL")
     Page<Recipe> findAllActivePaginatedForUser(@Param("userId") Long userId, @Param("categoryId") Long categoryId, Pageable pageable);
 }
