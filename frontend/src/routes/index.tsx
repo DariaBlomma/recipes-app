@@ -1,12 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';;
+import {HomePage} from "@/shared/widgets/HomePage/HomePage.tsx";
 
 export const Route = createFileRoute('/')({
-    component: () => (
-        <div>
-            <h1>Доброе пожаловать в твою записную книжку рецептов!</h1>
-            <p></p>
-            <Link to="/recipes">К списку рецептов</Link>
-        </div>
-    ),
+    component: HomePage,
 });

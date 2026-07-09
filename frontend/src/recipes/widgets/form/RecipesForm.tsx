@@ -1,5 +1,4 @@
 import styles from "./RecipesForm.module.scss"
-import {Link} from "@tanstack/react-router";
 import {useRecipesFormValidation} from "../../hooks/useRecipesFormValidation.ts";
 import type {RecipeFormData, RecipeSchema} from "@/recipes/types";
 import {BaseInput} from "@/shared/form-elems/BaseInput/BaseInput.tsx";
@@ -88,7 +87,6 @@ export function RecipesForm({ id }: Props) {
                     serverError && <BaseErrorMessage error={serverError} />
                 }
             </form>
-            <Link to="/recipes">К списку рецептов</Link>
         </div>
     )
 }
