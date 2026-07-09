@@ -59,9 +59,13 @@ export function useFormWithValidation<T extends FieldValues>(
         return await form.trigger();
     };
 
-    const resetForm = () => {
+    const resetForm = (data: T) => {
         setSubmitted(false);
-        form.reset(initialValues);
+        form.reset(data, {  keepDefaultValues: true,
+            keepDirty: false,
+            keepTouched: false,
+            keepValues: false }
+        );
     };
 
     const isTouched = Object.keys(touchedFields).length > 0;

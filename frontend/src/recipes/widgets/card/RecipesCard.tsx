@@ -1,8 +1,12 @@
 import styles from "./RecipesCard.module.scss"
 import type {RecipeSchema} from "@/recipes/types";
+import {useNavigate} from "@tanstack/react-router";
 
-type Props = Omit<RecipeSchema, "id">
-export function RecipesCard ({ description, name, externalLink } : Props) {
+export function RecipesCard ({ description, name, externalLink, id } : RecipeSchema) {
+    const navigate = useNavigate();
+    const onEditClick = () => {
+        navigate({to: `/recipes/edit/${id}`})
+    }
     return (
         <div className={styles.card}>
             <h3 className={styles.title}>{ name }</h3>
@@ -14,9 +18,10 @@ export function RecipesCard ({ description, name, externalLink } : Props) {
             {/*    <div className={styles.tag}>Tag 2</div>*/}
             {/*</div>*/}
             <div className={styles.footer}>
-                <div className={[styles.actionBtn, styles.edit].join(' ')}>Edit</div>
+                <div className={[styles.actionBtn, styles.edit].join(' ')} onClick={onEditClick}>Edit</div>
                 <div className={[styles.actionBtn, styles.delete].join(' ')}>Delete</div>
-                <div className={[styles.actionBtn, styles.view].join(' ')}>View</div>
+                {/*todo: implement later*/}
+                {/*<div className={[styles.actionBtn, styles.view].join(' ')}>View</div>*/}
             </div>
         </div>
     )

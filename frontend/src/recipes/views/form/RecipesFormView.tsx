@@ -1,9 +1,9 @@
 import {RecipesForm} from "@/recipes/widgets/form/RecipesForm.tsx";
 
-export function RecipesFormView() {
+export function RecipesFormView({ id}: { id?: number }   ) {
     return (
         <div>
-            <RecipesForm/>
+            <RecipesForm id={id} />
         </div>
     )
 }

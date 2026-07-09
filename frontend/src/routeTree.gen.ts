@@ -14,6 +14,7 @@ import { Route as RecipesIndexRouteImport } from './routes/recipes/index'
 import { Route as RecipesCreateRouteImport } from './routes/recipes/create'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as RecipesEditIdRouteImport } from './routes/recipes/edit/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecipesEditIdRoute = RecipesEditIdRouteImport.update({
+  id: '/recipes/edit/$id',
+  path: '/recipes/edit/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/recipes/create': typeof RecipesCreateRoute
   '/recipes/': typeof RecipesIndexRoute
+  '/recipes/edit/$id': typeof RecipesEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/recipes/create': typeof RecipesCreateRoute
   '/recipes': typeof RecipesIndexRoute
+  '/recipes/edit/$id': typeof RecipesEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +70,7 @@ export interface FileRoutesById {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/recipes/create': typeof RecipesCreateRoute
   '/recipes/': typeof RecipesIndexRoute
+  '/recipes/edit/$id': typeof RecipesEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,8 +80,15 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/recipes/create'
     | '/recipes/'
+    | '/recipes/edit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login' | '/auth/sign-up' | '/recipes/create' | '/recipes'
+  to:
+    | '/'
+    | '/auth/login'
+    | '/auth/sign-up'
+    | '/recipes/create'
+    | '/recipes'
+    | '/recipes/edit/$id'
   id:
     | '__root__'
     | '/'
@@ -80,6 +96,7 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/recipes/create'
     | '/recipes/'
+    | '/recipes/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +105,7 @@ export interface RootRouteChildren {
   AuthSignUpRoute: typeof AuthSignUpRoute
   RecipesCreateRoute: typeof RecipesCreateRoute
   RecipesIndexRoute: typeof RecipesIndexRoute
+  RecipesEditIdRoute: typeof RecipesEditIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -127,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recipes/edit/$id': {
+      id: '/recipes/edit/$id'
+      path: '/recipes/edit/$id'
+      fullPath: '/recipes/edit/$id'
+      preLoaderRoute: typeof RecipesEditIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -136,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignUpRoute: AuthSignUpRoute,
   RecipesCreateRoute: RecipesCreateRoute,
   RecipesIndexRoute: RecipesIndexRoute,
+  RecipesEditIdRoute: RecipesEditIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

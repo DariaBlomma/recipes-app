@@ -17,7 +17,7 @@ interface Props {
     id?: number;
 }
 export function RecipesForm({ id }: Props) {
-    const { isFormInvalid, fields, handleSubmit, control } = useRecipesFormValidation();
+    const { isFormInvalid, fields, handleSubmit, control, resetForm } = useRecipesFormValidation();
     const { submit, isPending, serverError } = useRecipesForm();
 
     const [categories, setCategories] = useState<CategorySchema[]>([]);
@@ -26,7 +26,12 @@ export function RecipesForm({ id }: Props) {
     useEffect(() => {
         CategoriesService.getList().then((data) => setCategories(data));
         if (id) {
-            RecipesService.getOne(id).then((data) => setRecipe(data));
+            RecipesService.getOne(id).then((data) => {
+                if (data) {
+                    setRecipe(data);
+                    resetForm(data);
+                }
+            });
         }
     }, []);
 

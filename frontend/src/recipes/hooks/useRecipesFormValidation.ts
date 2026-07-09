@@ -9,7 +9,8 @@ export function useRecipesFormValidation() {
         validateForm,
         form,
         handleSubmit,
-        control
+        control,
+        resetForm
     } = useFormWithValidation<RecipeFormData>({
         initialValues: {
             name: '',
@@ -51,6 +52,7 @@ export function useRecipesFormValidation() {
         isFormValidAndTouched,
         validateForm,
         handleSubmit,
-        control
+        control,
+        resetForm,
     };
 }
