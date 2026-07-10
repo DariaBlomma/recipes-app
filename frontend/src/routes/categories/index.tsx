@@ -1,4 +1,5 @@
 import {createFileRoute} from '@tanstack/react-router'
+import {CategoriesListView} from "@/categories/views/CategoriesListView/CategoriesListView.tsx";
 
 export const Route = createFileRoute('/categories/')({
     component: RouteComponent,
@@ -6,8 +7,6 @@ export const Route = createFileRoute('/categories/')({
 
 function RouteComponent() {
     return (
-        <div>
-            Categories List view
-        </div>
+        <CategoriesListView/>
     )
 }

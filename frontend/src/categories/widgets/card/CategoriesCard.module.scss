@@ -1,0 +1,43 @@
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background-color: white;
+  color: #333333;
+}
+
+.actionsBtns {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.actionBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit {
+  background-color: #ffe5c4;
+  color: orange;
+}
+
+.delete {
+  background-color: #ffc4c4;
+  color: red;
+}
+
+.view {
+  background-color: #c4eaff;
+  color: blue;
+}

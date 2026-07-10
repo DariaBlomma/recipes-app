@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
 
-    @Query("SELECT c FROM Category c JOIN FETCH c.recipes WHERE c.id = :id")
+    @Query("SELECT c FROM Category c LEFT JOIN FETCH c.recipes WHERE c.id = :id")
     Optional<Category> findByIdWithRecipes(@Param("id") Long id);
 
     @Query("SELECT c FROM Category c WHERE c.user.id = :userId AND c.deletedAt IS NULL")

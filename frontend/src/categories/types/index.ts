@@ -5,3 +5,7 @@ export interface CategorySchema {
 }
 
 export type CategoryPage = Omit<CategorySchema, "recipeIds">
+
+export interface CategoryFormData {
+    name: string;
+}
