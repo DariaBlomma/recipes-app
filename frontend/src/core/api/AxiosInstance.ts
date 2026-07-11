@@ -99,7 +99,9 @@ api.interceptors.response.use(
 
         if (!error.response) {
             if (!isSilent) {
-                console.error('Ошибка сети:', error.message);
+                const message = error.message || 'Ошибка сети: нет ответа от сервера';
+                console.error('Ошибка сети:', message);
+                alert(message);
             }
             return Promise.reject(error);
         }
@@ -108,6 +110,7 @@ api.interceptors.response.use(
             if (!isSilent) {
                 const message = extractErrorMessage(error);
                 console.error(message);
+                alert(message);
             }
         }
 

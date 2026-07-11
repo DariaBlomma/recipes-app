@@ -23,6 +23,7 @@ export function AuthLoginForm(): JSX.Element {
                 <h2 className={styles.title}>Войти</h2>
 
                 <BaseInput
+                    id="name"
                     label={"Имя пользователя"}
                     placeholder={"Имя пользователя"}
                     type={"text"}
@@ -31,6 +32,7 @@ export function AuthLoginForm(): JSX.Element {
                 />
 
                 <BaseInputPassword
+                    id="password"
                     label={"Пароль"}
                     placeholder="Введите пароль"
                     required={true}

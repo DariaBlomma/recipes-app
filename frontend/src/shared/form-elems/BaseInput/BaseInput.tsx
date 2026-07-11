@@ -1,12 +1,23 @@
-import type {JSX} from "react";
+import  {type JSX} from "react";
 import styles from "./BaseInput.module.scss";
 import type {BaseInputProps} from "@/shared/form-elems/types";
 import {BaseFormElemLayout} from "@/shared/form-elems/BaseFormElemLayout/BaseFormElemLayout.tsx";
+import * as React from "react";
 
-export function BaseInput({ label, id, className, error, required, variant, ...inputProps }: BaseInputProps): JSX.Element {
+export function BaseInput({
+  label,
+  id,
+  className,
+  error,
+  required,
+  variant,
+  children,
+  ...inputProps
+}: BaseInputProps & { children?: React.ReactNode}): JSX.Element {
     const mergedInputClassName = [
+        "base-input",
         styles.input,
-        error ? styles.inputError : '',
+        error ? "base-input.error" : '',
         className || '',
     ].filter(Boolean).join(' ');
 
@@ -18,6 +29,7 @@ export function BaseInput({ label, id, className, error, required, variant, ...i
             error={error}
             variant={variant}
         >
+        <div className={styles.inputWrapper}>
             <input
                 id={id}
                 className={mergedInputClassName}
@@ -25,6 +37,8 @@ export function BaseInput({ label, id, className, error, required, variant, ...i
                 aria-describedby={error ? `${id}-error` : undefined}
                 {...inputProps}
             />
+            { children }
+        </div>
         </BaseFormElemLayout>
     )
 }

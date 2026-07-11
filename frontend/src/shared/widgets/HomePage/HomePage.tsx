@@ -1,7 +1,17 @@
 import styles from "./HomePage.module.scss"
-import {Link} from "@tanstack/react-router";
+import {useNavigate} from "@tanstack/react-router";
+import {BaseButton} from "@/shared/form-elems/BaseButton/BaseButton.tsx";
 
 export function HomePage() {
+    const navigate = useNavigate();
+
+    const onCreateRecipe = () => {
+        navigate({ to: "/recipes/create"})
+    }
+
+    const onCreateCategpory =  () => {
+        navigate({to: "/categories/create"})
+    }
     return (
         <main className={styles.homePage}>
             <h1 className={styles.title}>Твоя электронная записная книжка рецептов</h1>
@@ -23,12 +33,12 @@ export function HomePage() {
             </section>
 
             <div className={styles.actions}>
-                <Link to="/categories/create" className={styles.btn}>
+                <BaseButton onClick={onCreateCategpory}>
                     Создать категорию
-                </Link>
-                <Link to="/recipes/create" className={styles.btnSecondary}>
+                </BaseButton>
+                <BaseButton onClick={onCreateRecipe} variant="outlined">
                     Добавить рецепт
-                </Link>
+                </BaseButton>
             </div>
         </main>
     );

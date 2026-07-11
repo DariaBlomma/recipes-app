@@ -1,10 +1,10 @@
 import {Link, useRouterState} from "@tanstack/react-router";
-import styles from "./NavBottom.module.scss";
+import styles from "./HeaderNav.module.scss";
 import type {JSX} from "react";
 import {IconRecipes} from "@/shared/icons/IconRecipes.tsx";
 import {IconCategories} from "@/shared/icons/IconCategories.tsx";
 
-export function NavBottom(): JSX.Element {
+export function HeaderNav(): JSX.Element {
     const routerState = useRouterState();
     const currentPath = routerState.location.pathname;
 
@@ -12,7 +12,7 @@ export function NavBottom(): JSX.Element {
     const isCategoriesActive = currentPath.startsWith("/categories");
 
     return (
-        <nav className={styles.bottomNav}>
+        <nav className={styles.headerNav}>
             <Link to="/recipes" className={`${styles.navItem} ${isRecipesActive ? styles.active : ""}`}>
                 <span className={styles.icon}>
                     <IconRecipes/>

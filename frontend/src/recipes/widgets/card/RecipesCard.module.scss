@@ -8,6 +8,24 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   background-color: white;
   color: #333333;
+
+  @media(min-width: 1024px) {
+    justify-content: space-between;
+  }
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.description {
+  display: -webkit-box;
+  width: 100%;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow-wrap: break-word;
+  overflow: hidden;
 }
 
 .tags {

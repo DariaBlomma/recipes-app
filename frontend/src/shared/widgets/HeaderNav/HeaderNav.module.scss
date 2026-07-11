@@ -1,17 +1,23 @@
-.bottomNav {
+.headerNav {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 72px;
+  display: flex;
   background-color: #ffffff;
   border-top: 1px solid #e0e0e0;
-  display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 1100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 8px;
+
+  @media(min-width: 1024px) {
+    top: 0;
+    bottom: auto;
+    height: auto;
+  }
 }
 
 .navItem {
@@ -27,13 +33,17 @@
   line-height: 1.2;
   transition: color 0.2s ease;
 
-  &:active {
-    opacity: 0.7;
+  @media(min-width: 1024px) {
+    flex-direction: row;
+    gap: 15px;
   }
 
-  &.active,
+   &.active {
+    color: var(--primary-focus-color);
+  }
+
   &:hover {
-    color: orangered;
+    color: var(--primary-hover-color);
   }
 
   &:first-child {

@@ -13,8 +13,9 @@ export function BaseTextarea({
      ...inputProps
  }: BaseTextareaProps): JSX.Element {
     const mergedClassName = [
+        "base-input",
         styles.input,
-        error ? styles.inputError : "",
+        error ? "base-input.error" : "",
         className || "",
     ]
         .filter(Boolean)

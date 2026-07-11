@@ -3,6 +3,7 @@ import { BaseButton } from "@/shared/form-elems/BaseButton/BaseButton.tsx";
 import styles from "./CategoriesListView.module.scss";
 import { useNavigate } from "@tanstack/react-router";
 import {useCategories} from "@/categories/hooks/useCategories.ts";
+import {clsx} from "clsx";
 
 export function CategoriesListView() {
     const { categories } = useCategories();
@@ -13,7 +14,7 @@ export function CategoriesListView() {
     };
 
     return (
-        <div className={styles.view}>
+        <div className={clsx("base-list-layout", styles.view)}>
             <BaseButton onClick={redirectToForm}>Создать категорию</BaseButton>
 
             <CategoriesList

@@ -5,6 +5,7 @@ import { BaseButton } from "@/shared/form-elems/BaseButton/BaseButton.tsx";
 import styles from "./RecipesListView.module.scss";
 import { useNavigate } from "@tanstack/react-router";
 import { useRecipes } from "@/recipes/hooks/useRecipes.ts";
+import {clsx} from "clsx";
 
 export function RecipesListView() {
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
@@ -17,7 +18,7 @@ export function RecipesListView() {
     };
 
     return (
-        <div className={styles.view}>
+        <div className={clsx("base-list-layout", styles.view)}>
             <BaseButton onClick={redirectToForm}>Создать рецепт</BaseButton>
 
             <RecipesFilters

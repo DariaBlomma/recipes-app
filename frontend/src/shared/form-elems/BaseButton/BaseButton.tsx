@@ -3,7 +3,7 @@ import styles from "./BaseButton.module.scss";
 
 interface BaseButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>{
     label?: string;
-    variant?: "primary" | "secondary";
+    variant?: "primary" | "secondary" | "outlined";
 }
 export function BaseButton({ label, disabled, className, children, variant = "primary", ...props }: BaseButtonProps): JSX.Element {
     const mergedClassName = [

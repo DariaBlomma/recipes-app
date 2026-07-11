@@ -2,6 +2,7 @@ import { RecipesCard } from "@/recipes/widgets/card/RecipesCard.tsx";
 import styles from "./RecipesList.module.scss";
 import type {RecipeSchema} from "@/recipes/types";
 import InfiniteScroll from "react-infinite-scroll-component";
+import {clsx} from "clsx";
 
 interface Props {
     recipes: RecipeSchema[];
@@ -31,7 +32,7 @@ export const RecipesList = ({
                     </div>
                 }
                 scrollThreshold={0.5}
-                className={styles.list}
+                className={clsx("base-list", styles.list)}
             >
                 {recipes.map((recipe) => (
                     <RecipesCard

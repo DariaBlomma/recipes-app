@@ -18,17 +18,17 @@ export function BaseInputPassword({ label, ...inputProps }: BaseInputProps): JSX
                 label={label}
                 type={showPassword ? 'text' : 'password'}
                 {...inputProps}
-            />
-
-            <button
-                type="button"
-                className={styles.eyeButton}
-                onClick={toggleVisibility}
-                aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
-                tabIndex={-1}
             >
-                {showPassword ? <IconEyeClosed/> : <IconEye/> }
-            </button>
+                <button
+                    type="button"
+                    className={styles.eyeButton}
+                    onClick={toggleVisibility}
+                    aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+                    tabIndex={-1}
+                >
+                    {showPassword ? <IconEyeClosed/> : <IconEye/> }
+                </button>
+            </BaseInput>
         </div>
     );
 }

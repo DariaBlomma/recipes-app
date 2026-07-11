@@ -20,16 +20,23 @@
     background-color: var(--primary-color);
 
     &:hover {
-
+      background-color: var(--primary-hover-color);
     }
 
     &:active {
-
+      background-color: var(--primary-focus-color);
     }
   }
 
-  &.secondary {
+  &.outlined {
     background: transparent;
     border: 1px solid var(--primary-color);
+
+    &:hover {
+      border-color: var(--primary-hover-color);
+    }
+    &:active {
+      border-color: var(--primary-focus-color);
+    }
   }
 }

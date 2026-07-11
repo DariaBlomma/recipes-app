@@ -1,6 +1,6 @@
 import {Outlet, createRootRoute, useRouterState} from '@tanstack/react-router';
 import { useAuthCheck } from '@/auth/hooks/useAuthCheck';
-import {NavBottom} from "@/shared/widgets/NavBottom/NavBottom.tsx";
+import {HeaderNav} from "../shared/widgets/HeaderNav/HeaderNav.tsx";
 
 export const Route = createRootRoute({
     component: RootLayout,
@@ -12,9 +12,10 @@ function RootLayout() {
     const currentPath = routerState.location.pathname;
     const isAuthPage = currentPath.startsWith('/auth');
     return (
-        <main>
+        <main className="main">
+            { !isAuthPage && <HeaderNav />}
             <Outlet />
-            { !isAuthPage && <NavBottom />}
+            { !isAuthPage && <HeaderNav />}
         </main>
     );
 }
