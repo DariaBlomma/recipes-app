@@ -1,7 +1,7 @@
 # Этап 1: Сборка проекта
 FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
-COPY . .
+COPY .. .
 RUN ./mvnw clean package -DskipTests
 
 # Этап 2: Финальный образ (легкий)
