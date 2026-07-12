@@ -31,6 +31,7 @@ export function RecipesListView() {
                 hasNextPage={hasNextPage}
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}
+                filterCategoryId={selectedCategoryId}
             />
         </div>
     );

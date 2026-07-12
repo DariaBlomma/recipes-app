@@ -9,12 +9,14 @@ interface Props {
     hasNextPage: boolean;
     loadMore: () => void;
     isFetchingNextPage: boolean;
+    filterCategoryId?: number;
 }
 export const RecipesList = ({
     recipes,
     hasNextPage,
     loadMore,
     isFetchingNextPage,
+    filterCategoryId,
 }: Props) => {
     if (!recipes.length && !hasNextPage) {
         return <div className={styles.empty}>В этой категории пока нет рецептов</div>;
@@ -38,6 +40,7 @@ export const RecipesList = ({
                     <RecipesCard
                         key={recipe.id}
                         {...recipe}
+                        filterCategoryId={filterCategoryId}
                     />
                 ))}
             </InfiniteScroll>

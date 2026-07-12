@@ -23,21 +23,16 @@ main {
 }
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-
   --primary-color: #ee845c;
-  --secondary-color: blue;
   --primary-hover-color: #e89f82;
   --primary-focus-color: #df4b19;
+  --secondary-color: blue;
+  --gray-secondary-color: #838282;
+  --gray-secondary-hover-color: #aeadad;
+  --gray-secondary-focus-color: #504e4e;
   --red: #dc2626;
+  --red-hover-color: #dc5656;
+  --red-focus-color: #7e0303;
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 

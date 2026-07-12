@@ -28,6 +28,18 @@
     }
   }
 
+  &.secondary {
+    background-color: var(--gray-secondary-color);
+
+    &:hover {
+      background-color: var(--gray-secondary-hover-color);
+    }
+
+    &:active {
+      background-color: var(--gray-secondary-focus-color);
+    }
+  }
+
   &.outlined {
     background: transparent;
     border: 1px solid var(--primary-color);
@@ -37,6 +49,17 @@
     }
     &:active {
       border-color: var(--primary-focus-color);
+    }
+  }
+
+  &.danger {
+    background-color: var(--red);
+
+    &:hover {
+      background-color: var(--red-hover-color);
+    }
+    &:active {
+      background-color: var(--red-focus-color);
     }
   }
 }

@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.20",
     "@tanstack/router-devtools": "^1.166.13",
     "@tanstack/router-plugin": "^1.167.27",
     "@types/node": "^24.12.2",
