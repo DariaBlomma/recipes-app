@@ -4,30 +4,27 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
-  datasource:
-    url: jdbc:postgresql://localhost:5432/recipedb
-    username: recipeuser
-    password: recipepass
-    driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
   jackson:
     default-property-inclusion: non_null
-  profiles:
-    active: dev #or prod
+  web:
+    cors:
+      mappings:
+        "/**":
+          allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+          allowed-methods: GET, POST, PUT, DELETE, OPTIONS
+          allowed-headers: "*"
+          allow-credentials: true
+
 server:
   port: 8080
   servlet:
     context-path: /api
 
-jwt:
-  secret: ${JWT_SECRET:x3BSPl2F6tZlwXxFAkGBvB5pulyf7ABPtwUdPOL6Zws=}
-  token:
-    expiration: 24h
+

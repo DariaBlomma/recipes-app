@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/recipedb
+    username: recipeuser
+    password: recipepass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+jwt:
+  secret: ${JWT_SECRET:x3BSPl2F6tZlwXxFAkGBvB5pulyf7ABPtwUdPOL6Zws=}
+  token:
+    expiration: 24h
