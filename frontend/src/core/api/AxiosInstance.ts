@@ -3,7 +3,7 @@ import { AuthService } from '@/auth/services/AuthService';
 import type {ApiRequestConfig} from "@/core/api/types";
 import {extractErrorMessage} from "@/core/api/utils/errors.ts";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -11,7 +11,6 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
-    withCredentials: true,
 });
 
 let isRefreshing = false;
@@ -101,7 +100,7 @@ api.interceptors.response.use(
             if (!isSilent) {
                 const message = error.message || 'Ошибка сети: нет ответа от сервера';
                 console.error('Ошибка сети:', message);
-                alert(message);
+                // alert(message);
             }
             return Promise.reject(error);
         }
@@ -110,7 +109,7 @@ api.interceptors.response.use(
             if (!isSilent) {
                 const message = extractErrorMessage(error);
                 console.error(message);
-                alert(message);
+                // alert(message);
             }
         }
 
