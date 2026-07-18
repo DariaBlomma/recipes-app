@@ -6,12 +6,13 @@
   --gray-secondary-color: #838282;
   --gray-secondary-hover-color: #aeadad;
   --gray-secondary-focus-color: #504e4e;
+  --gray-500: #4d4d4f;
   --red: #dc2626;
   --red-hover-color: #dc5656;
   --red-focus-color: #7e0303;
   --shadow:
           rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
+  --blue-800: #10102D;
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -36,6 +37,7 @@
 
 html, body, #root {
   height: 100%;
+  background-color: var(--secondary-color);
 }
 
 h1,
@@ -79,14 +81,18 @@ p {
   margin: 0;
 }
 
+#root {
+  background-color: var(--secondary-color);
+}
+
 .main {
   height: 100%;
-  padding-bottom: 80px;
+  padding: 80px 0;
   background-color: var(--secondary-color);
 
   @media (min-width: 1024px) {
     padding-bottom: 0;
-    padding-top: 50px;
+    padding-top: 150px;
     max-width: 800px;
     margin: 0 auto;
   }

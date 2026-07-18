@@ -1,0 +1,27 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: var(--gray-secondary-focus-color);
+  border-bottom: 1px solid var(--gray-secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  z-index: 50;
+}
+
+.logo {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.userBlock {
+  display: flex;
+  align-items: center;
+}
