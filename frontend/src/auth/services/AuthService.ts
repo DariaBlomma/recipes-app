@@ -78,9 +78,9 @@ export class AuthService {
 
     static async signOut() {
         try {
-            await api.delete('/auth/token');
-        } catch {
-            // ignore
+            await api.post('/auth/logout');
+        } catch(e) {
+            console.error(e);
         }
         this.removeToken();
     }

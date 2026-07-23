@@ -1,0 +1,21 @@
+.dropdownContent {
+  padding: 8px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: white;
+}
+
+.dropdownItem {
+  cursor: pointer;
+  padding: 8px 16px;
+  background-color: var(--gray-100);
+  color: var(--secondary-color);
+  font-weight: 500;
+  border: none;
+  outline: none;
+  transition: background-color 0.5s ease;
+
+  &:hover {
+    background-color: var(--gray-secondary-hover-color);
+  }
+}

@@ -4,8 +4,11 @@ import com.daria.recipe.app.dto.auth.AuthResponse;
 import com.daria.recipe.app.dto.auth.LoginRequest;
 import com.daria.recipe.app.dto.auth.RefreshTokenRequest;
 import com.daria.recipe.app.dto.auth.SignUpRequest;
+import com.daria.recipe.app.helpers.JwtHelper;
+import com.daria.recipe.app.security.AccessTokenService;
 import com.daria.recipe.app.security.CustomUserDetails;
 import com.daria.recipe.app.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final AccessTokenService accessTokenService;
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
@@ -36,9 +40,16 @@ public class AuthController {
         return authService.refresh(userDetails.getId(), request);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        authService.logout(userDetails.getId());
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout(HttpServletRequest request) {
+        String jwtToken = JwtHelper.extractTokenFromHeader(request);
+
+        if (jwtToken != null) {
+            Long userId = accessTokenService.extractUserId(jwtToken);
+            if (userId != null) {
+                authService.logout(userId);
+            }
+        }
     }
 }

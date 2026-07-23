@@ -4,6 +4,7 @@ import {IconLogo} from "@/shared/icons/IconLogo.tsx";
 import {useEffect, useState} from "react";
 import type {UserSchema} from "@/user/types";
 import {UserService} from "@/user/service/UserService.ts";
+import {UserProfileDropdown} from "@/user/widgets/UserProfileDropdown/UserProfileDropdown.tsx";
 
 export const TheHeader = () => {
     const [currentUser, setCurrentUser] = useState<UserSchema | undefined>();
@@ -21,7 +22,9 @@ export const TheHeader = () => {
             {
                 currentUser && (
                     <div className={styles.userBlock}>
-                        <UserAvatar userName={currentUser.userName} />
+                        <UserProfileDropdown>
+                            <UserAvatar userName={currentUser.userName} />
+                        </UserProfileDropdown>
                     </div>
                 )
             }

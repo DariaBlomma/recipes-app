@@ -58,7 +58,7 @@ api.interceptors.response.use(
         if (status === 401 && !originalRequest._retry) {
             if (!AuthService.token?.refresh) {
                 AuthService.removeToken();
-                window.location.href = '/auth/login';
+                // window.location.href = '/auth/login';
                 return Promise.reject(error);
             }
 
@@ -89,7 +89,7 @@ api.interceptors.response.use(
             } catch (refreshError) {
                 processQueue(refreshError, null);
                 AuthService.removeToken();
-                window.location.href = '/auth/login';
+                // window.location.href = '/auth/login';
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;

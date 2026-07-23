@@ -1,5 +1,6 @@
 package com.daria.recipe.app.security;
 
+import com.daria.recipe.app.helpers.JwtHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,20 +26,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+        String jwtToken = JwtHelper.extractTokenFromHeader(request);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (jwtToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String jwt = authHeader.substring("Bearer ".length());
-        String username = accessTokenService.extractUserName(jwt);
+        String username = accessTokenService.extractUserName(jwtToken);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsServiceImp.loadUserByUsername(username);
 
-            if (accessTokenService.isValidToken(jwt, userDetails.getUsername())) {
+            if (accessTokenService.isValidToken(jwtToken, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
