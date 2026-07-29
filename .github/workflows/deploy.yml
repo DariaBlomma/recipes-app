@@ -1,0 +1,29 @@
+name: Deploy Backend to Local Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: self-hosted 
+
+    steps:
+      - name: Deploy Backend
+        run: |
+          echo "🚀 Начинаем процесс деплоя..."
+          
+          # 1. Переходим в папку с бэкендом
+          cd /home/user/Programming/RecipeApp
+          
+          # 2. Сбрасываем локальные изменения и подтягиваем свежие из ветки master
+          git fetch --all
+          git reset --hard origin/master
+          
+          # 3. Пересобираем и перезапускаем Docker-контейнеры
+          echo "🔄 Перезапуск Docker-контейнеров бэкенда..."
+          docker-compose down
+          docker-compose up -d --build
+          
+          echo "✅ Деплой бэкенда успешно завершен!"
