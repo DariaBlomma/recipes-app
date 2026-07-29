@@ -14,8 +14,8 @@ jobs:
         run: |
           echo "🚀 Начинаем процесс деплоя..."
           
-          # 1. Переходим в папку с бэкендом
-          cd /home/user/Programming/RecipeApp
+          # 1. Переходим в папку с проектом, где расположен docker-compose
+          cd /home/user/Programming/RecipeApp/recipes-app
           
           # 2. Сбрасываем локальные изменения и подтягиваем свежие из ветки master
           git fetch --all
