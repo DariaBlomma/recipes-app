@@ -15,3 +15,8 @@ jwt:
   secret: ${JWT_SECRET:x3BSPl2F6tZlwXxFAkGBvB5pulyf7ABPtwUdPOL6Zws=}
   token:
     expiration: 24h
+
+app:
+  frontend-base-url: "http://localhost:5173"
+  password-reset-ttl-minutes: 30
+  rate-limit-max-requests-per-hour: 3

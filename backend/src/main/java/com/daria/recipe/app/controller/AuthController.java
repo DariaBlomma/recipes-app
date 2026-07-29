@@ -1,9 +1,6 @@
 package com.daria.recipe.app.controller;
 
-import com.daria.recipe.app.dto.auth.AuthResponse;
-import com.daria.recipe.app.dto.auth.LoginRequest;
-import com.daria.recipe.app.dto.auth.RefreshTokenRequest;
-import com.daria.recipe.app.dto.auth.SignUpRequest;
+import com.daria.recipe.app.dto.auth.*;
 import com.daria.recipe.app.helpers.JwtHelper;
 import com.daria.recipe.app.security.AccessTokenService;
 import com.daria.recipe.app.security.CustomUserDetails;
@@ -51,5 +48,11 @@ public class AuthController {
                 authService.logout(userId);
             }
         }
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
     }
 }

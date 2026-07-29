@@ -1,9 +1,7 @@
 package com.daria.recipe.app.service;
 
-import com.daria.recipe.app.dto.auth.AuthResponse;
-import com.daria.recipe.app.dto.auth.LoginRequest;
-import com.daria.recipe.app.dto.auth.RefreshTokenRequest;
-import com.daria.recipe.app.dto.auth.SignUpRequest;
+import com.daria.recipe.app.config.AppConfig;
+import com.daria.recipe.app.dto.auth.*;
 import com.daria.recipe.app.dto.user.UserResponse;
 import com.daria.recipe.app.dto.user.UserResponseWithPassword;
 import com.daria.recipe.app.entity.User;
@@ -17,6 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -28,6 +31,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
+    private final AppConfig appConfig;
 
     @Transactional
     public AuthResponse signUp(SignUpRequest request) {
@@ -61,6 +65,33 @@ public class AuthService {
         refreshTokenService.revokeRefreshToken(userId);
     }
 
+    @Transactional
+    public void handleForgotPassword(ForgotPasswordRequest request) {
+        userRepository.findActiveByEmail(request.getEmail()).ifPresent(user -> {
+            String token = generateSecureToken();
+
+            ZonedDateTime expiresAt = ZonedDateTime.ofInstant(
+                    Instant.now().plusSeconds(30 * 60),
+                    ZoneId.systemDefault()
+            );
+
+            // 4. Сохраняем токен в БД
+            var resetToken = new PasswordResetToken(); // твоя сущность
+            resetToken.setEmail(email);
+            resetToken.setToken(token);
+            resetToken.setExpiresAt(expiresAt);
+            resetToken.setUsed(false);
+            tokenRepository.save(resetToken);
+
+            // 5. Формируем ссылку сброса
+            String resetLink = appConfig.getFrontendBaseUrl() + "/auth/reset-password?token=" + token;
+
+            // 6. Отправляем письмо
+            sendResetEmail(email, resetLink)
+
+        });
+    }
+
     private AuthResponse buildAuthResponse(UserResponse user, UUID refreshToken) {
         String token = accessTokenService.generateToken(
                 user.getUserName(),
@@ -75,5 +106,12 @@ public class AuthService {
                 .userName(user.getUserName())
                 .userId(user.getId())
                 .build();
+    }
+
+
+    private String generateSecureToken() {
+        byte[] randomBytes = new byte[32];
+        new SecureRandom().nextBytes(randomBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 }
