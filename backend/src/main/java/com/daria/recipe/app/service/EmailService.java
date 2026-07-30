@@ -22,7 +22,7 @@ public class EmailService {
             helper.setTo(toEmail);
             helper.setSubject("Восстановление пароля в Recipe App");
 
-            String resetUrl = appConfig.getFrontendBaseUrl() + "/reset-password?token=" + token;
+            String resetUrl = appConfig.getFrontendBaseUrl() + "/auth/reset-password?token=" + token;
 
             String htmlContent = """
                 <!DOCTYPE html>

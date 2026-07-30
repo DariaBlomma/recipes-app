@@ -118,4 +118,12 @@ export class AuthService {
 
         throw new Error('Fail to refresh token');
     }
+
+    static async forgotPassword(email: string) {
+        await api.post('/auth/forgot-password', { email });
+    }
+
+    static async resetPassword(token: string, newPassword: string) {
+        await api.post('/auth/reset-password', { token, newPassword });
+    }
 }
