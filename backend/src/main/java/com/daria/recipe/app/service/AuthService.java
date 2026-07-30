@@ -4,21 +4,25 @@ import com.daria.recipe.app.config.AppConfig;
 import com.daria.recipe.app.dto.auth.*;
 import com.daria.recipe.app.dto.user.UserResponse;
 import com.daria.recipe.app.dto.user.UserResponseWithPassword;
+import com.daria.recipe.app.entity.PasswordResetToken;
 import com.daria.recipe.app.entity.User;
 import com.daria.recipe.app.exception.ResourceNotFoundException;
 import com.daria.recipe.app.exception.UnauthorizedException;
 import com.daria.recipe.app.mapper.UserMapper;
+import com.daria.recipe.app.repository.PasswordResetTokenRepository;
 import com.daria.recipe.app.repository.UserRepository;
 import com.daria.recipe.app.security.AccessTokenService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.mail.javamail.JavaMailSender;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -32,6 +36,8 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final UserRepository userRepository;
     private final AppConfig appConfig;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final EmailService emailService;
 
     @Transactional
     public AuthResponse signUp(SignUpRequest request) {
@@ -70,26 +76,34 @@ public class AuthService {
         userRepository.findActiveByEmail(request.getEmail()).ifPresent(user -> {
             String token = generateSecureToken();
 
-            ZonedDateTime expiresAt = ZonedDateTime.ofInstant(
-                    Instant.now().plusSeconds(30 * 60),
-                    ZoneId.systemDefault()
-            );
+            Instant expiresAt = Instant.now().plus(appConfig.getPasswordResetTtlMinutes(), ChronoUnit.MINUTES);
 
-            // 4. Сохраняем токен в БД
-            var resetToken = new PasswordResetToken(); // твоя сущность
-            resetToken.setEmail(email);
-            resetToken.setToken(token);
-            resetToken.setExpiresAt(expiresAt);
-            resetToken.setUsed(false);
-            tokenRepository.save(resetToken);
+            PasswordResetToken resetToken = PasswordResetToken.builder()
+                    .token(token)
+                    .user(user)
+                    .expiresAt(expiresAt)
+                    .build();
+            passwordResetTokenRepository.save(resetToken);
 
-            // 5. Формируем ссылку сброса
-            String resetLink = appConfig.getFrontendBaseUrl() + "/auth/reset-password?token=" + token;
-
-            // 6. Отправляем письмо
-            sendResetEmail(email, resetLink)
-
+            emailService.sendPasswordResetEmail(user.getEmail(), resetToken.getToken());
         });
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(request.getToken())
+                .orElseThrow(() -> new IllegalArgumentException("Недействительный токен восстановления"));
+
+        if (Instant.now().isAfter(resetToken.getExpiresAt())) {
+            passwordResetTokenRepository.delete(resetToken);
+            throw new IllegalArgumentException("Срок действия токена истек. Запросите восстановление пароля заново.");
+        }
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        passwordResetTokenRepository.delete(resetToken);
     }
 
     private AuthResponse buildAuthResponse(UserResponse user, UUID refreshToken) {
