@@ -64,10 +64,8 @@ public class RefreshTokenService {
         userRepository.findActiveById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found or deleted: " + userId)
         );
-        RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId)
-                .orElseThrow(() -> new InvalidTokenException("Refresh token not found"));
-
-        refreshTokenRepository.delete(refreshToken);
+        refreshTokenRepository.findByUserId(userId)
+                .ifPresent(refreshTokenRepository::delete);
     }
 
     public UUID rotateRefreshToken(Long userId) {

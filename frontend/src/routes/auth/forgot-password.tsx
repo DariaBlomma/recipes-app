@@ -1,8 +1,8 @@
 import {createFileRoute, redirect} from '@tanstack/react-router';
-import { AuthLoginView } from "@/auth/views/AuthLoginView.tsx";
 import {AuthService} from "@/auth/services/AuthService.ts";
+import {AuthForgotPasswordView} from "@/auth/views/AuthForgotPasswordView.tsx";
 
-export const Route = createFileRoute('/auth/login')({
+export const Route = createFileRoute('/auth/forgot-password')({
     loader: async () => {
         if (AuthService.isAuthenticated) {
             throw redirect({ to: '/' });
@@ -10,7 +10,5 @@ export const Route = createFileRoute('/auth/login')({
 
         return {};
     },
-    component: () => (
-            <AuthLoginView />
-    ),
+    component: AuthForgotPasswordView,
 });

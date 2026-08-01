@@ -78,9 +78,9 @@ export class AuthService {
 
     static async signOut() {
         try {
-            await api.delete('/auth/token');
-        } catch {
-            // ignore
+            await api.post('/auth/logout');
+        } catch(e) {
+            console.error(e);
         }
         this.removeToken();
     }
@@ -117,5 +117,13 @@ export class AuthService {
         }
 
         throw new Error('Fail to refresh token');
+    }
+
+    static async forgotPassword(email: string) {
+        await api.post('/auth/forgot-password', { email });
+    }
+
+    static async resetPassword(token: string, newPassword: string) {
+        await api.post('/auth/reset-password', { token, newPassword });
     }
 }

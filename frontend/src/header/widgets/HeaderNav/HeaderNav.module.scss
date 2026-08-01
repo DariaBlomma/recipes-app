@@ -9,12 +9,12 @@
   border-top: 1px solid #e0e0e0;
   justify-content: space-around;
   align-items: center;
-  z-index: 1100;
+  z-index: 1;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 8px;
 
   @media(min-width: 1024px) {
-    top: 0;
+    top: 64px;
     bottom: auto;
     height: auto;
   }

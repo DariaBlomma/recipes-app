@@ -43,6 +43,10 @@ export function AuthLoginForm(): JSX.Element {
                     <BaseErrorMessage error={serverError}/>
                 )}
 
+                <div className={styles.forgotPasswordLink}>
+                    <Link to="/auth/forgot-password">Забыли пароль?</Link>
+                </div>
+
                 <BaseButton type={"submit"} disabled={isFormInvalid}>
                     {isPending ? 'Загрузка...' : 'Войти'}
                 </BaseButton>

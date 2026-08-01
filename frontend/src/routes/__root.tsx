@@ -1,21 +1,18 @@
-import {Outlet, createRootRoute, useRouterState} from '@tanstack/react-router';
-import { useAuthCheck } from '@/auth/hooks/useAuthCheck';
-import {HeaderNav} from "../shared/widgets/HeaderNav/HeaderNav.tsx";
+import {createRootRoute, redirect} from '@tanstack/react-router';
+import {LayoutRoot} from "@/shared/layouts/LayoutRoot.tsx";
+import {AuthService} from "@/auth/services/AuthService.ts";
 
 export const Route = createRootRoute({
-    component: RootLayout,
-});
+    loader: async () => {
+        const token = AuthService.token?.access;
+        const currentPath = window.location.pathname;
+        const isAuthPage = currentPath.startsWith('/auth');
 
-function RootLayout() {
-    useAuthCheck();
-    const routerState = useRouterState();
-    const currentPath = routerState.location.pathname;
-    const isAuthPage = currentPath.startsWith('/auth');
-    return (
-        <main className="main">
-            { !isAuthPage && <HeaderNav />}
-            <Outlet />
-            { !isAuthPage && <HeaderNav />}
-        </main>
-    );
-}
+        if (!token && !isAuthPage) {
+            throw redirect({ to: '/auth/login' });
+        }
+
+        return {};
+    },
+    component: LayoutRoot,
+});

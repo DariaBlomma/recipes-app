@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changes/003-create-recipes-table.sql
   - include:
       file: db/changelog/changes/004-create-refresh-tokens-table.sql
+  - include:
+      file: db/changelog/changes/005-create-password-reset-tokens-table.sql
