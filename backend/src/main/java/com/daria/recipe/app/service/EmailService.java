@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import java.io.UnsupportedEncodingException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,11 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(toEmail);
+            try {
+                helper.setFrom(appConfig.getMailFrom(), "Recipe App");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("Ошибка кодировки имени отправителя", e);
+            }
             helper.setSubject("Восстановление пароля в Recipe App");
 
             String resetUrl = appConfig.getFrontendBaseUrl() + "/auth/reset-password?token=" + token;

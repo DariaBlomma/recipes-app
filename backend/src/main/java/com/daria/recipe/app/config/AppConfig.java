@@ -11,6 +11,6 @@ public class AppConfig {
     private String frontendBaseUrl;
     private int passwordResetTtlMinutes = 30;
     private int rateLimitMaxRequestsPerHour = 3;
-
+    private String mailFrom;
 }
 
