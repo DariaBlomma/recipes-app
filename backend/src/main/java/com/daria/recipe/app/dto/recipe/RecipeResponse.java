@@ -10,4 +10,5 @@ public class RecipeResponse {
     private Long userId;
     private String externalLink;
     private String description;
+    private String shortDescription;
 }

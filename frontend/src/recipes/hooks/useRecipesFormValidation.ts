@@ -10,10 +10,11 @@ export function useRecipesFormValidation() {
         form,
         handleSubmit,
         control,
-        resetForm
+        resetForm,
     } = useFormWithValidation<RecipeFormData>({
         initialValues: {
             name: '',
+            shortDescription: '',
             description: '',
             externalLink: '',
             categoryId: undefined,
@@ -38,7 +39,12 @@ export function useRecipesFormValidation() {
             },
 
             description: {
+                required: "Обязательное поле",
                 maxLength: { value: 2000, message: 'Описание слишком длинное' },
+            },
+
+            shortDescription: {
+                maxLength: { value: 150, message: 'Краткое описание слишком длинное' },
             },
         },
     });

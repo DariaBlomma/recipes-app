@@ -2,7 +2,6 @@ import styles from "./RecipesForm.module.scss"
 import {useRecipesFormValidation} from "../../hooks/useRecipesFormValidation.ts";
 import type {RecipeFormData, RecipeSchema} from "@/recipes/types";
 import {BaseInput} from "@/shared/form-elems/BaseInput/BaseInput.tsx";
-import {BaseTextarea} from "@/shared/form-elems/BaseTextarea/BaseTextarea.tsx";
 import {CategoriesSingleSelectInForm} from "@/categories/widgets/CategoriesSingleSelectInForm.tsx";
 import {useEffect, useState} from "react";
 import type {CategorySchema} from "@/categories/types";
@@ -11,12 +10,13 @@ import {BaseButton} from "@/shared/form-elems/BaseButton/BaseButton.tsx";
 import {RecipesService} from "@/recipes/services/RecipesService.ts";
 import {useRecipesForm} from "@/recipes/hooks/useRecipesForm.ts";
 import {BaseErrorMessage} from "@/shared/form-elems/BaseErrorMessage/BaseErrorMessage.tsx";
+import {BaseRichTextEditor} from "@/shared/form-elems/BaseRichTextEditor/BaseRichTextEditor.tsx";
 
 interface Props {
     id?: number;
 }
 export function RecipesForm({ id }: Props) {
-    const { isFormInvalid, fields, handleSubmit, control, resetForm } = useRecipesFormValidation();
+    const { isFormInvalid, fields, handleSubmit, control, resetForm  } = useRecipesFormValidation();
     const { submit, isPending, serverError } = useRecipesForm();
 
     const [categories, setCategories] = useState<CategorySchema[]>([]);
@@ -62,13 +62,20 @@ export function RecipesForm({ id }: Props) {
                     variant="dark"
                     {...fields.externalLink.props}
                 />
-                <BaseTextarea
+                <BaseInput
+                    id="shortDescription"
+                    label="Краткое описание (для карточки)"
+                    placeholder="Пара слов о рецепте"
+                    {...fields.shortDescription.props}
+                />
+                <BaseRichTextEditor
                     id="description"
+                    name="description"
+                    control={control}
                     label={"Описание рецепта"}
                     placeholder={"Описание рецепта"}
-                    required={false}
+                    required={true}
                     variant="dark"
-                    {...fields.description.props}
                 />
                 <CategoriesSingleSelectInForm
                     id="categoryId"

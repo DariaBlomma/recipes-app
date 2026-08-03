@@ -34,8 +34,11 @@ public class Recipe {
     @Column(length = 500)
     private String externalLink;
 
-    @Column(length = 2000)
+    @Column(length = 2000, nullable = false)
     private String description;
+
+    @Column(length = 2000)
+    private String shortDescription;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

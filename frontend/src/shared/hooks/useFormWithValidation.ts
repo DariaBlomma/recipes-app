@@ -43,7 +43,7 @@ export function useFormWithValidation<T extends FieldValues>(
 
         return {
             name,
-            props,
+            props
         };
     };
 

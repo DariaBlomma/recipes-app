@@ -14,6 +14,7 @@ export interface RecipeSchema {
     userId: number;
     name: string;
     externalLink?: string;
+    shortDescription?: string;
     description: string;
     categoryId: number;
 }

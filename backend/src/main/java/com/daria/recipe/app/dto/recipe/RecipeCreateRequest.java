@@ -10,17 +10,21 @@ import org.hibernate.validator.constraints.URL;
 @Data
 @NoArgsConstructor
 public class RecipeCreateRequest {
-    @NotBlank(message = "Recipe name is required")
-    @Size(min = 2, max = 200, message = "Recipe name must be between 2 and 200 characters")
+    @NotBlank(message = "Название обязательно")
+    @Size(max = 200, message = "Название рецепта должно быть до 200 символов")
     private String name;
 
-    @NotNull(message =  "Category Id is required")
+    @NotNull(message =  "Id категории обязательно")
     private Long categoryId;
 
-    @URL(message = "Invalid URL format")
+    @URL(message = "Неверный URL формат")
     @Size(max = 500)
     private String externalLink;
 
-    @Size(max = 2000, message = "Recipe description name must be between 2 and 2000 characters")
+    @Size(max = 2000, message = "Описание должно быть до 2000 символов")
+    @NotBlank(message = "Описание - обязательное поле")
     private String description;
+
+    @Size(max = 150, message = "Короткое описание должно быть до 150 символов ")
+    private String shortDescription;
 }
