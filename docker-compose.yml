@@ -21,6 +21,12 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
+      interval: 30s          # Проверять каждые 30 секунд
+      timeout: 10s           # Ждать ответа не более 10 секунд
+      retries: 3             # 3 неудачи = контейнер unhealthy
+      start_period: 40s      # Дать 40 секунд на старт приложения перед проверками
     depends_on:
       - postgres
     restart: unless-stopped

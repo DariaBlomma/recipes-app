@@ -6,5 +6,6 @@ RUN mvn clean package -DskipTests
 # Этап 2: Финальный образ (легкий)
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+RUN apk add --no-cache curl
 COPY --from=builder /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-Xmx350m", "-Xss512k", "-XX:MaxRAM=450m", "-jar", "app.jar"]
