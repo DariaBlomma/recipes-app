@@ -23,13 +23,19 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PostMapping
+    @PostMapping("/create-common")
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponse create(
+    public CategoryResponse createCommon(@Valid @RequestBody CategoryCreateRequest request) {
+        return categoryService.createCommon(request);
+    }
+
+    @PostMapping("/create-my")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryResponse createMy(
             @Valid @RequestBody CategoryCreateRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return categoryService.create(userDetails.getId(), request);
+        return categoryService.createMy(userDetails.getId(), request);
     }
 
     @GetMapping("/{id}")
@@ -47,10 +53,16 @@ public class CategoryController {
         return categoryService.getListPaginated(userDetails.getId(), pageable);
     }
 
-    @GetMapping()
+    @GetMapping("/common-list")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CategoryResponse> getList() {
+        return categoryService.getCommonList();
+    }
+
+    @GetMapping("/my-list")
     @ResponseStatus(HttpStatus.OK)
     public List<CategoryResponse> getList(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return categoryService.getList(userDetails.getId());
+        return categoryService.getMyList(userDetails.getId());
     }
 
     @PutMapping("/{id}")

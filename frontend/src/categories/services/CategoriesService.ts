@@ -9,8 +9,13 @@ export class CategoriesService {
         return response.data;
     }
 
-    static async getList() {
-        const response = await api.get<CategorySchema[]>(`/${baseUrl}`);
+    static async getCommonList() {
+        const response = await api.get<CategorySchema[]>(`/${baseUrl}/common-list`);
+        return response.data;
+    }
+
+    static async getMyList() {
+        const response = await api.get<CategorySchema[]>(`/${baseUrl}/my-list`);
         return response.data;
     }
 

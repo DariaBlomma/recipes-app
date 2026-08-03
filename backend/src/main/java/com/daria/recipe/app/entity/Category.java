@@ -27,8 +27,8 @@ public class Category {
     private List<Recipe> recipes = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User user; // common or personal
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

@@ -1,6 +1,5 @@
 package com.daria.recipe.app.service;
 
-import com.daria.recipe.app.dto.category.CategoryPageResponse;
 import com.daria.recipe.app.dto.recipe.RecipeCreateRequest;
 import com.daria.recipe.app.dto.recipe.RecipeResponse;
 import com.daria.recipe.app.dto.recipe.RecipeUpdateRequest;
@@ -20,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -41,16 +40,28 @@ public class RecipeService {
     @Transactional
     public RecipeResponse createRecipe(Long userId, RecipeCreateRequest createRequest) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException( "User not found with id: " + userId));
-        Category category = categoryRepository
+                () -> new ResourceNotFoundException( "Пользователь  с таким id не найден: " + userId));
+        Category commonCategory = categoryRepository
                 .findById(createRequest.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Category not found with id:" + createRequest.getCategoryId()
+                        "Категория с таким id не найдена:" + createRequest.getCategoryId()
                 ));
 
        Recipe recipe = recipeMapper.toEntity(createRequest);
-       recipe.setCategory(category);
+       recipe.setCategory(commonCategory);
        recipe.setUser(user);
+
+        if (createRequest.getPersonalCategoryIds() != null && !createRequest.getPersonalCategoryIds().isEmpty()) {
+            List<Category> personalCategories = categoryRepository
+                    .findAllActiveByIdsForActiveUser(createRequest.getPersonalCategoryIds(), userId);
+
+            if (personalCategories.size() != createRequest.getPersonalCategoryIds().size()) {
+                throw new ResourceNotFoundException(
+                        "Одна из личных категорий не найдена или не принадлежит вам");
+            }
+
+            recipe.setPersonalCategories(personalCategories);
+        }
 
        Recipe savedRecipe = recipeRepository.save(recipe);
        return recipeMapper.toResponse(savedRecipe);
@@ -91,6 +102,23 @@ public class RecipeService {
                             "Category not found with id:" + requestCategoryId
                     ));
             recipe.setCategory(category);
+        }
+
+        if (request.getPersonalCategoryIds() != null) {
+            if (request.getPersonalCategoryIds().isEmpty()) {
+                recipe.getPersonalCategories().clear();
+            } else {
+                List<Category> personalCategories = categoryRepository
+                        .findAllActiveByIdsForActiveUser(request.getPersonalCategoryIds(), userId);
+
+                if (personalCategories.size() != request.getPersonalCategoryIds().size()) {
+                    throw new ResourceNotFoundException(
+                            "Одна из личных категорий не найдена или не принадлежит вам");
+                }
+
+                recipe.getPersonalCategories().clear();
+                recipe.getPersonalCategories().addAll(personalCategories);
+            }
         }
 
         Recipe savedRecipe = recipeRepository.save(recipe);

@@ -42,9 +42,19 @@ public class CategoryService {
     );
 
     @Transactional
-    public CategoryResponse create(Long userId, CategoryCreateRequest request) {
-        if (categoryRepository.existsByName(request.getName())) {
-            throw new ConflictException("Category with such name already exists" + request.getName());
+    public CategoryResponse createCommon(CategoryCreateRequest request) {
+        if (categoryRepository.existsByNameAndUserIsNull(request.getName())) {
+            throw new ConflictException("Категория с таким имененм уже существует" + request.getName());
+        }
+        Category category = categoryMapper.toEntity(request);
+        Category saved = categoryRepository.save(category);
+        return categoryMapper.toResponse(saved);
+    }
+
+    @Transactional
+    public CategoryResponse createMy(Long userId, CategoryCreateRequest request) {
+        if (categoryRepository.existsForUserByName(request.getName(), userId)) {
+            throw new ConflictException("Категория с таким имененм уже существует" + request.getName());
         }
         User user = userRepository.getReferenceById(userId);
         Category category = categoryMapper.toEntity(request);
@@ -69,7 +79,15 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getList(Long userId) {
+    public List<CategoryResponse> getCommonList() {
+        return categoryRepository.findAllActive()
+                .stream()
+                .map(categoryMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> getMyList(Long userId) {
         return categoryRepository.findAllActiveForUser(userId)
                 .stream()
                 .map(categoryMapper::toResponse)

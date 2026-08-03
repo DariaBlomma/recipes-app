@@ -13,6 +13,16 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsByName(String name);
+    boolean existsByNameAndUserIsNull(String name);
+
+    @Query("""
+        SELECT COUNT(c) > 0
+        FROM Category c
+        WHERE c.name = :name
+        AND c.user.id = :userId
+        AND c.user.deletedAt IS NULL
+    """)
+    boolean existsForUserByName(@Param("name") String name, @Param("userId") Long userId);
 
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.recipes WHERE c.id = :id")
     Optional<Category> findByIdWithRecipes(@Param("id") Long id);
@@ -22,4 +32,16 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("SELECT c FROM Category c WHERE c.user.id = :userId AND c.deletedAt IS NULL")
     List<Category> findAllActiveForUser(@Param("userId") Long userId);
+
+    @Query("""
+        SELECT c FROM Category c
+        WHERE c.id IN :ids
+        AND c.user.id = :userId
+        AND c.user.deletedAt IS NULL
+        AND c.deletedAt IS NULL
+    """)
+    List<Category> findAllActiveByIdsForActiveUser(@Param("ids") List<Long> ids, @Param("userId") Long userId);
+
+    @Query("SELECT c FROM Category c WHERE c.deletedAt IS NULL")
+    List<Category> findAllActive();
 }

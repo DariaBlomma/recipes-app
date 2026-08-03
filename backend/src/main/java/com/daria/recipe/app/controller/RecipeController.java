@@ -1,6 +1,5 @@
 package com.daria.recipe.app.controller;
 
-import com.daria.recipe.app.dto.category.CategoryPageResponse;
 import com.daria.recipe.app.dto.recipe.RecipeCreateRequest;
 import com.daria.recipe.app.dto.recipe.RecipeResponse;
 import com.daria.recipe.app.dto.recipe.RecipeUpdateRequest;

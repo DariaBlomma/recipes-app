@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class RecipeCreateRequest {
@@ -16,6 +19,8 @@ public class RecipeCreateRequest {
 
     @NotNull(message =  "Id категории обязательно")
     private Long categoryId;
+
+    private List<Long> personalCategoryIds;
 
     @URL(message = "Неверный URL формат")
     @Size(max = 500)
