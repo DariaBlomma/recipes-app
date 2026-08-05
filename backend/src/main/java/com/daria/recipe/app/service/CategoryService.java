@@ -54,7 +54,10 @@ public class CategoryService {
     @Transactional
     public CategoryResponse createMy(Long userId, CategoryCreateRequest request) {
         if (categoryRepository.existsForUserByName(request.getName(), userId)) {
-            throw new ConflictException("Категория с таким имененм уже существует" + request.getName());
+            throw new ConflictException("Личная категория с таким имененм уже существует: " + request.getName());
+        }
+        if (categoryRepository.existsByNameAndUserIsNull(request.getName())) {
+            throw new ConflictException("Общая категория с таким имененм уже существует: " + request.getName());
         }
         User user = userRepository.getReferenceById(userId);
         Category category = categoryMapper.toEntity(request);
