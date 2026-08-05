@@ -84,7 +84,7 @@ api.interceptors.response.use(
                     return api(originalRequest);
                 }
 
-                throw new Error('Refresh failed');
+                throw new Error('Обновление токена не удалось');
             } catch (refreshError) {
                 processQueue(refreshError, null);
                 AuthService.removeToken();

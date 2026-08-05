@@ -1,0 +1,16 @@
+.forgotPasswordLink {
+  text-align: right;
+  margin-bottom: 16px;
+
+  a {
+    color: #666666;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #4CAF50;
+      text-decoration: underline;
+    }
+  }
+}
