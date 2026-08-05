@@ -46,7 +46,7 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         UserResponseWithPassword user = userService.getMeWithPassword(request.getUserName());
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new UnauthorizedException("Invalid username or password");
+            throw new UnauthorizedException("Неверный логин или пароль");
         }
 
         UUID refreshToken = refreshTokenService.rotateRefreshToken(user.getId());
@@ -56,7 +56,7 @@ public class AuthService {
     @Transactional
     public AuthResponse refresh(Long userId, RefreshTokenRequest request) {
         User user = userRepository.findActiveById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found or deleted: " + userId));
+                () -> new ResourceNotFoundException("Пользователь не найден или удален: " + userId));
         refreshTokenService.verifyRefreshToken(request.refreshToken());
         UUID refresh = refreshTokenService.rotateRefreshToken(userId);
         return buildAuthResponse(userMapper.toResponse(user), refresh);

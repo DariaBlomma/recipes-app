@@ -7,6 +7,7 @@ export interface RecipeFormData extends Omit<RecipeSchema, "userId" | "id" | "ca
 
 export interface RecipesGetListParams extends BaseGetListParams{
     categoryId?: number;
+    personalCategoryIds?: number[];
 }
 
 export interface RecipeSchema {
@@ -17,4 +18,5 @@ export interface RecipeSchema {
     shortDescription?: string;
     description: string;
     categoryId: number;
+    personalCategoryIds?: number[];
 }

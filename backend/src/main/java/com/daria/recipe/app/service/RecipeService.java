@@ -1,6 +1,7 @@
 package com.daria.recipe.app.service;
 
 import com.daria.recipe.app.dto.recipe.RecipeCreateRequest;
+import com.daria.recipe.app.dto.recipe.RecipeGetListParams;
 import com.daria.recipe.app.dto.recipe.RecipeResponse;
 import com.daria.recipe.app.dto.recipe.RecipeUpdateRequest;
 import com.daria.recipe.app.entity.Category;
@@ -69,16 +70,34 @@ public class RecipeService {
 
     @Transactional(readOnly = true)
     public RecipeResponse getOne(Long recipeId) {
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(
+        Recipe recipe = recipeRepository.findByIdWithPersonalCategories(recipeId).orElseThrow(
                 () -> new ResourceNotFoundException("Recipe not found with id: " + recipeId));
         return recipeMapper.toResponse(recipe);
     }
 
     @Transactional(readOnly = true)
-    public Page<RecipeResponse> getList(Long userId, Long categoryId, Pageable pageable) {
+    public Page<RecipeResponse> getList(Long userId, Pageable pageable, RecipeGetListParams filters) {
         pageableHelper.validateSortFields(pageable.getSort(), ALLOWED_SORT_FIELDS);
         Pageable stablePageable = pageableHelper.addFallbackSort(pageable);
-        Page<Recipe> recipePage = recipeRepository.findAllActivePaginatedForUser(userId, categoryId, stablePageable);
+        List<Long> personalIds = filters.getPersonalCategoryIds() == null
+                ? List.of()
+                : filters.getPersonalCategoryIds().stream().distinct().toList();
+        boolean hasPersonalFilter = !personalIds.isEmpty();
+
+        if (hasPersonalFilter) {
+            long ownedCount = categoryRepository.countByIdInForUser(personalIds, userId);
+            if (ownedCount != personalIds.size()) {
+                throw new ResourceNotFoundException("Категория не найдена");
+            }
+        }
+
+        Page<Recipe> recipePage = recipeRepository.findAllActivePaginatedForUser(
+                userId,
+                filters.getCategoryId(),
+                hasPersonalFilter,
+                hasPersonalFilter ? personalIds : List.of(-1L), // заглушка: IN не умеет быть пустым
+                stablePageable
+        );
         return recipePage.map(recipeMapper::toResponse);
     }
 

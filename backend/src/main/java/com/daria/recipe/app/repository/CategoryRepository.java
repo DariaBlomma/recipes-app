@@ -24,11 +24,46 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     """)
     boolean existsForUserByName(@Param("name") String name, @Param("userId") Long userId);
 
+    @Query("""
+        SELECT COUNT(c) > 0
+        FROM Category c
+        WHERE c.id = :id
+          AND c.user.id = :userId
+          AND c.deletedAt IS NULL
+          AND c.user.deletedAt IS NULL
+    """)
+    boolean existsByIdForUser(@Param("id") Long id, @Param("userId") Long userId);
+
+    @Query("""
+        SELECT COUNT(c) FROM Category c
+        WHERE c.id IN :ids
+          AND c.user.id = :userId
+          AND c.deletedAt IS NULL
+          AND c.user.deletedAt IS NULL
+    """)
+    long countByIdInForUser(@Param("ids") List<Long> ids, @Param("userId") Long userId);
+
+    @Query("""
+        SELECT COUNT(c) > 0
+        FROM Category c
+        WHERE c.name = :name
+        AND c.user.id = :userId
+        AND c.user.deletedAt IS NULL
+        AND c.deletedAt IS NULL
+        AND (:categoryId IS NULL OR c.id <> :categoryId)
+    """)
+    boolean isNameTaken(@Param("name") String name,
+                        @Param("userId") Long userId,
+                        @Param("categoryId") Long categoryId);
+
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.recipes WHERE c.id = :id")
     Optional<Category> findByIdWithRecipes(@Param("id") Long id);
 
     @Query("SELECT c FROM Category c WHERE c.user.id = :userId AND c.deletedAt IS NULL")
     Page<Category> findAllActivePaginatedForUser(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("SELECT c FROM Category c WHERE c.deletedAt IS NULL")
+    Page<Category> findAllActivePaginated(Pageable pageable);
 
     @Query("SELECT c FROM Category c WHERE c.user.id = :userId AND c.deletedAt IS NULL")
     List<Category> findAllActiveForUser(@Param("userId") Long userId);
@@ -42,6 +77,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     """)
     List<Category> findAllActiveByIdsForActiveUser(@Param("ids") List<Long> ids, @Param("userId") Long userId);
 
-    @Query("SELECT c FROM Category c WHERE c.deletedAt IS NULL")
-    List<Category> findAllActive();
+    @Query("SELECT c FROM Category c WHERE c.deletedAt IS NULL AND c.user IS NULL")
+    List<Category> findAllActiveCommon();
 }

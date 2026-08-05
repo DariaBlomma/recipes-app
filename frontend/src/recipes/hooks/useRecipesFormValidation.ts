@@ -18,6 +18,7 @@ export function useRecipesFormValidation() {
             description: '',
             externalLink: '',
             categoryId: undefined,
+            personalCategoryIds: undefined,
         },
         validationSchema: {
             name: {

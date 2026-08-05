@@ -1,7 +1,7 @@
 import { useFormWithValidation } from "@/shared/hooks/useFormWithValidation.ts";
 import type {CategoryFormData} from "@/categories/types";
 
-export function useCategoriesFormValidation() {
+export function usePersonalCategoriesFormValidation() {
     const {
         getFields,
         isFormInvalid,

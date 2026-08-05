@@ -24,7 +24,7 @@ export function HeaderNav(): JSX.Element {
                 <span className={styles.icon}>
                     <IconCategories/>
                 </span>
-                <span className={styles.label}>Категории</span>
+                <span className={styles.label}>Мои категории</span>
             </Link>
         </nav>
     );

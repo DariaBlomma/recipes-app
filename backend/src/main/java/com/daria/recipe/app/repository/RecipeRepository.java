@@ -9,12 +9,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("SELECT r FROM Recipe r JOIN FETCH r.category  WHERE  r.id = :id")
     Optional<Recipe> findByIdWithCategory(@Param("id") Long id);
+
+    @Query("SELECT r FROM Recipe r LEFT JOIN FETCH r.personalCategories WHERE r.id = :id AND r.deletedAt IS NULL")
+    Optional<Recipe> findByIdWithPersonalCategories(@Param("id") Long id);
 
     @Query("""
         SELECT r FROM Recipe r 
@@ -30,6 +34,19 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
                               @Param("newCategoryId") Long newCategoryId);
 
 
-    @Query("SELECT r FROM Recipe r WHERE r.user.id = :userId AND (:categoryId IS NULL OR r.category.id = :categoryId) AND r.deletedAt IS NULL")
-    Page<Recipe> findAllActivePaginatedForUser(@Param("userId") Long userId, @Param("categoryId") Long categoryId, Pageable pageable);
+    @Query("""
+    SELECT r FROM Recipe r
+    WHERE r.deletedAt IS NULL
+      AND (r.user.id = :userId OR r.category.user IS NULL)
+      AND (:categoryId IS NULL OR r.category.id = :categoryId)
+      AND (:hasPersonalFilter = false OR EXISTS (
+          SELECT pc.id FROM Recipe rec JOIN rec.personalCategories pc
+          WHERE rec.id = r.id AND pc.id IN :personalCategoryIds
+      ))
+    """)
+    Page<Recipe> findAllActivePaginatedForUser(@Param("userId") Long userId,
+                                               @Param("categoryId") Long categoryId,
+                                               @Param("hasPersonalFilter") boolean hasPersonalFilter,
+                                               @Param("personalCategoryIds") List<Long> personalCategoryIds,
+                                               Pageable pageable);
 }

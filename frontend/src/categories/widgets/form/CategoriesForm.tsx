@@ -1,25 +1,25 @@
 import styles from "./CategoriesForm.module.scss"
-import {useCategoriesFormValidation} from "../../hooks/useCategoriesFormValidation.ts";
+import {usePersonalCategoriesFormValidation} from "../../hooks/usePersonalCategoriesFormValidation.ts";
 import {BaseInput} from "@/shared/form-elems/BaseInput/BaseInput.tsx";
 import {useEffect, useState} from "react";
-import {CategoriesService} from "@/categories/services/CategoriesService.ts";
+import {CategoriesPersonalService} from "../../services/CategoriesPersonalService.ts";
 import {BaseButton} from "@/shared/form-elems/BaseButton/BaseButton.tsx";
 import {BaseErrorMessage} from "@/shared/form-elems/BaseErrorMessage/BaseErrorMessage.tsx";
 import type {CategoryFormData, CategorySchema} from "@/categories/types";
-import {useCategoriesForm} from "@/categories/hooks/useCategoriesForm.ts";
+import {usePersonalCategoriesForm} from "../../hooks/usePersonalCategoriesForm.ts";
 
 interface Props {
     id?: number;
 }
 export function CategoriesForm({ id }: Props) {
-    const { isFormInvalid, fields, handleSubmit, resetForm } = useCategoriesFormValidation();
-    const { submit, isPending, serverError } = useCategoriesForm();
+    const { isFormInvalid, fields, handleSubmit, resetForm } = usePersonalCategoriesFormValidation();
+    const { submit, isPending, serverError } = usePersonalCategoriesForm();
 
     const [category, setCategory] = useState<CategorySchema | undefined>();
 
     useEffect(() => {
         if (id) {
-            CategoriesService.getOne(id).then((data) => {
+            CategoriesPersonalService.getOne(id).then((data) => {
                 if (data) {
                     setCategory(data);
                     resetForm(data);

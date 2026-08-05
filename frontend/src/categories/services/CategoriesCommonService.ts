@@ -2,20 +2,15 @@ import { api } from '@/core/api/AxiosInstance';
 import type {BaseGetListParams, PageDto} from "@/shared/form-elems/types";
 import type {CategoryPage, CategorySchema} from "@/categories/types";
 
-const baseUrl = "categories"
-export class CategoriesService {
+const baseUrl = "categories-common"
+export class CategoriesCommonService {
     static async getListPaginated(data: BaseGetListParams) {
         const response = await api.get<PageDto<CategoryPage>>(`/${baseUrl}/paginated`, { params: data } );
         return response.data;
     }
 
-    static async getCommonList() {
-        const response = await api.get<CategorySchema[]>(`/${baseUrl}/common-list`);
-        return response.data;
-    }
-
-    static async getMyList() {
-        const response = await api.get<CategorySchema[]>(`/${baseUrl}/my-list`);
+    static async getList() {
+        const response = await api.get<CategorySchema[]>(`/${baseUrl}`);
         return response.data;
     }
 
