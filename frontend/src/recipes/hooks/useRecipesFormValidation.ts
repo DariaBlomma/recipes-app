@@ -32,9 +32,15 @@ export function useRecipesFormValidation() {
             },
 
             externalLink: {
-                pattern: {
-                    value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/i,
-                    message: 'Некорректный формат URL',
+                validate: (val) => {
+                    const value = val?.toString();
+                    if (!value) return true; // необязательное поле
+                    try {
+                        new URL(value);
+                        return true;
+                    } catch {
+                        return 'Некорректный формат URL';
+                    }
                 },
                 maxLength: { value: 500, message: 'Ссылка слишком длинная' },
             },
