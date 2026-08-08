@@ -1,27 +1,65 @@
-# Recipe App
+# 🍳 Recipe App
 
-Small app to keep your favourite recipes always with you! This is modern alternative of old cooking books
+Веб-приложение для управления рецептами с возможностью создания личных категорий, поиска и систематизации кулинарных рецептов.
 
-## Technologies
+## 🛠 Технологии
 
 ### Backend
+- **Java 21** + **Spring Boot 4**
+- **Maven** — сборка и управление зависимостями
+- **PostgreSQL** — база данных
+- **Liquibase** — миграции БД
+- **Docker** + **Docker Compose** — контейнеризация
+- **GitHub Actions** — CI/CD и автоматический деплой
+- **Grafana Cloud (Loki + Promtail)** — централизованный сбор и анализ логов
+- **Spring Boot Actuator** — мониторинг здоровья приложения
 
-Main technologies:
-- Java 21
-- Spring Boot v4
-- Maven
-- PostgreSQL
-- Docker Compose
+### Frontend
+- **React** + **TypeScript**
+- **TanStack Router** — файловая маршрутизация
+- **React Hook Form** — управление формами и валидация
+- **Quill Editor** — редактирование описаний рецептов
+- **Vercel** — хостинг фронтенда
 
-Project illustrates usages of:
-- Rest Api
-- JWT (for now - sign, login and access token)
-- JPA/Hibernate
-- Lombok
-- MapStruct
-- global exception handler with @RestControllerAdvice
-- custom exceptions
-- clean architecture (controller - service - repository - entity)
-- DTO usage
-- profile-based configuration with named beans (dev/prod environments with different PasswordEncoder implementations)
-- JSON Nullable example (see package with such name)
+### Инфраструктура
+- **Serveo.net** — публичный доступ к локальному серверу
+- **Профили Spring Boot** — разделение конфигураций `dev` / `prod`
+- **`.env` файлы** — управление секретами вне Git
+
+---
+
+## 🚀 Релизы
+
+### v-1.0.0 — MVP
+Первый рабочий релиз с базовым функционалом:
+- ✅ Регистрация и авторизация пользователей
+- ✅ Список рецептов
+- ✅ Личные категории
+
+### v-1.0.2 — UX и безопасность
+Улучшение пользовательского опыта и добавление функций восстановления доступа:
+- 🎨 Поддержка темной и светлой темы
+- 🐛 Исправление бага с 404 при обновлении страницы
+- 🔐 Восстановление пароля (Forgot / Reset password)
+- 👤 Header с информацией о пользователе
+- 🚪 Функция выхода из аккаунта (Sign out)
+- ⚙️ Настройка GitHub Actions для автоматического деплоя
+
+### v-1.0.3 — Стабильность и новые возможности
+
+**Bug fixes:**
+- 🔧 Убран лишний External URL, если он не задан
+- 🔧 Исправлено переполнение текста ошибки за границы блока
+
+**Infrastructure:**
+-  Healthcheck через `Actuator/health` каждые 15 минут
+- 📊 Интеграция с Grafana Cloud для сбора и анализа логов
+- 🔍 Отображение ошибок деплоя прямо в GitHub
+
+**Frontend:**
+- ✏️ Интеграция **Quill Editor** для форматированного описания рецептов
+- 🗂 Разделение общих и личных категорий с защитой от дублирования названий
+- 🗑 Удаление личных категорий
+- 🧱 Выделен `AuthLayout` для страниц авторизации
+
+---
