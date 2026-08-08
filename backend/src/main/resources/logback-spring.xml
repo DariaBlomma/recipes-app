@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATH" value="${LOG_PATH}"/>
+
+    <!-- 3. Настройки для профиля по умолчанию (dev / local) -->
+    <springProfile name="default, dev">
+        <!-- 1. Аппендер для разработки (вывод в консоль) -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <!-- %highlight красит уровень (INFO, WARN, ERROR) в зависимости от его важности -->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} [traceId=%X{traceId:-}, spanId=%X{spanId:-}] - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <!-- Для вашего пакета можно включить DEBUG, чтобы видеть больше деталей при разработке -->
+        <logger name="om.daria.recipe.app" level="DEBUG"/>
+    </springProfile>
+
+    <!-- 4. Настройки для профиля prod -->
+    <springProfile name="prod">
+        <!-- 2. Аппендер для продакшена (запись в JSON-файл) -->
+        <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/app.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <!-- Имя архивных файлов: app-2026-08-08.0.log -->
+                <fileNamePattern>${LOG_PATH}/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>50MB</maxFileSize>       <!-- Максимальный размер одного файла -->
+                <maxHistory>7</maxHistory>            <!-- Хранить логи за последние 7 дней -->
+                <totalSizeCap>500MB</totalSizeCap>    <!-- Общий лимит места под логи -->
+            </rollingPolicy>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <!-- Автоматически включает все поля из MDC (включая traceId и spanId от Micrometer) -->
+                <includeMdc>true</includeMdc>
+                <!-- Добавляем статическое поле, чтобы в Grafana легко фильтровать именно это приложение -->
+                <customFields>{"application":"recipe-app-backend"}</customFields>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="JSON_FILE"/>
+        </root>
+    </springProfile>
+</configuration>

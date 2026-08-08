@@ -21,6 +21,8 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    volumes:
+      - backend-logs:${LOG_PATH} # <-- ВАЖНО: Бэкенд пишет логи в этот общий том
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
       interval: 30s          # Проверять каждые 30 секунд
@@ -29,6 +31,19 @@ services:
       start_period: 40s      # Дать 40 секунд на старт приложения перед проверками
     depends_on:
       - postgres
-    restart: unless-stopped
+    restart: no
+
+  promtail:
+    image: grafana/promtail:3.0.0
+    container_name: recipe-promtail
+    volumes:
+      - backend-logs:${LOG_PATH}:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true  # <--    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - backend
 volumes:
   postgres_data:
+  backend-logs:

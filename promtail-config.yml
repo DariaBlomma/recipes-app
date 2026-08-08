@@ -1,0 +1,33 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+# Куда отправляем логи (берем данные из .env)
+clients:
+  - url: https://${GRAFANA_LOKI_USERNAME}:${GRAFANA_LOKI_API_KEY}@${GRAFANA_LOKI_HOST}/loki/api/v1/push
+scrape_configs:
+  - job_name: recipe-backend
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: recipe-backend
+          env: prod
+          # Откуда читаем логи (берем путь из .env)
+          __path__: ${LOG_PATH}/*.log
+
+    # Парсинг JSON-логов, чтобы в Grafana можно было искать по полям
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            traceId: traceId
+            spanId: spanId
+            message: message
+            logger_name: logger_name
+      - labels:
+          level:
+          traceId:
