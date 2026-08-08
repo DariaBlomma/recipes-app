@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { CategoriesService } from '@/categories/services/CategoriesService.ts';
+import { CategoriesPersonalService } from '../services/CategoriesPersonalService.ts';
 
-export function useCategories() {
+export function usePersonalCategories() {
     const query = useQuery({
-        queryKey: ['categories'],
+        queryKey: ['categories', 'personal'],
         queryFn: async () => {
-            return await CategoriesService.getList();
+            return await CategoriesPersonalService.getList();
         },
     });
 

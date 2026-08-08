@@ -1,0 +1,130 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.label {
+  font-size: 14px;
+  color: #c9c9c9;
+  font-weight: 500;
+}
+
+.container {
+  position: relative;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  background: #1e1e1e;
+  overflow: hidden;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: #5a8fff;
+  }
+}
+
+.hasError .container {
+  border-color: #ff4d4d;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid #2a2a2a;
+  background: #181818;
+  flex-wrap: wrap;
+}
+
+.toolbarButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #c9c9c9;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: #2a2a2a;
+    color: #fff;
+  }
+
+  &.active {
+    background: #3a3a3a;
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: #2a2a2a;
+  margin: 0 4px;
+}
+
+.content {
+  padding: 12px;
+  min-height: 120px;
+  max-height: 300px;
+  overflow-y: auto;
+  outline: none;
+
+  :global {
+    .tiptap {
+      outline: none;
+      color: #e0e0e0;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100px;
+
+      p {
+        margin: 0 0 8px 0;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      ul, ol {
+        padding-left: 24px;
+        margin: 0 0 8px 0;
+      }
+
+      strong {
+        font-weight: 700;
+      }
+
+      em {
+        font-style: italic;
+      }
+    }
+  }
+}
+
+.placeholder {
+  position: absolute;
+  top: 60px; // под тулбаром
+  left: 24px;
+  color: #6a6a6a;
+  pointer-events: none;
+  font-size: 15px;
+}
+
+.error {
+  color: #ff4d4d;
+  font-size: 13px;
+}

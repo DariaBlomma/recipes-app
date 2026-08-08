@@ -1,7 +1,7 @@
 package com.daria.recipe.app.controller;
 
-import com.daria.recipe.app.dto.category.CategoryPageResponse;
 import com.daria.recipe.app.dto.recipe.RecipeCreateRequest;
+import com.daria.recipe.app.dto.recipe.RecipeGetListParams;
 import com.daria.recipe.app.dto.recipe.RecipeResponse;
 import com.daria.recipe.app.dto.recipe.RecipeUpdateRequest;
 import com.daria.recipe.app.security.CustomUserDetails;
@@ -39,12 +39,12 @@ public class RecipeController {
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public Page<RecipeResponse> getList(
-            @RequestParam(required = false) Long categoryId,
+            RecipeGetListParams params,
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.DESC)
             Pageable pageable,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return recipeService.getList(userDetails.getId(), categoryId, pageable);
+        return recipeService.getList(userDetails.getId(), pageable, params);
     }
 
     @PutMapping("/{id}")

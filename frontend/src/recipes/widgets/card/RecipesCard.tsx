@@ -5,7 +5,7 @@ import {BaseDialogConfirm} from "@/shared/popups/BaseDialogConfirm/BaseDialogCon
 import {useState} from "react";
 import {useRecipesDelete} from "@/recipes/hooks/useRecipesDelete.ts";
 
-export function RecipesCard ({ description, name, externalLink, id, filterCategoryId } : RecipeSchema & { filterCategoryId?: number}) {
+export function RecipesCard ({ shortDescription, name, externalLink, id, filterCategoryId } : RecipeSchema & { filterCategoryId?: number}) {
     const navigate = useNavigate();
     const deleteMutation = useRecipesDelete(filterCategoryId)
 
@@ -27,8 +27,8 @@ export function RecipesCard ({ description, name, externalLink, id, filterCatego
     return (
         <div className={styles.card}>
             <h3 className={styles.title}>{ name }</h3>
-            <p className={styles.description}>{ description }</p>
-            <a href={externalLink}>External link</a>
+            <p className={styles.description}>{ shortDescription }</p>
+            { externalLink && <a href={externalLink}>Ссылка на внешний ресурс</a> }
             {/*todo: left for future/ Maybe categories, or ingeredients*/}
             {/*<div className={styles.tags}>*/}
             {/*    <div className={styles.tag}>Tag 1</div>*/}

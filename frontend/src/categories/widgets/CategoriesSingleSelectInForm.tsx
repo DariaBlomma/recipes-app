@@ -33,7 +33,6 @@ export function CategoriesSingleSelectInForm<T extends FieldValues>({
             control={control}
             rules={rules}
             render={({ field, fieldState }) => {
-                console.log("🚀 ~ CategoriesSingleSelectInForm ~ fieldState: ", fieldState);
                 return (
                     <BaseFormElemLayout
                         id={id}

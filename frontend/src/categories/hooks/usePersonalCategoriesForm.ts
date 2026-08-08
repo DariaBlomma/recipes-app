@@ -3,13 +3,13 @@ import {extractErrorMessage} from "@/core/api/utils/errors.ts";
 import type {AxiosError} from "axios";
 import {useNavigate} from "@tanstack/react-router";
 import type {CategoryFormData} from "@/categories/types";
-import {CategoriesService} from "@/categories/services/CategoriesService.ts";
+import {CategoriesPersonalService} from "../services/CategoriesPersonalService.ts";
 
-export function useCategoriesForm() {
+export function usePersonalCategoriesForm() {
     const navigate = useNavigate();
     const mutation = useMutation({
         mutationFn: (data: CategoryFormData & { id?: number}) => {
-            return data.id ? CategoriesService.update(data.id, data) : CategoriesService.create(data);
+            return data.id ? CategoriesPersonalService.update(data.id, data) : CategoriesPersonalService.create(data);
         },
         onSuccess: () => {
             navigate({ to: '/categories' });

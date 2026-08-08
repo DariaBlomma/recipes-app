@@ -42,9 +42,22 @@ public class CategoryService {
     );
 
     @Transactional
-    public CategoryResponse create(Long userId, CategoryCreateRequest request) {
-        if (categoryRepository.existsByName(request.getName())) {
-            throw new ConflictException("Category with such name already exists" + request.getName());
+    public CategoryResponse createCommon(CategoryCreateRequest request) {
+        if (categoryRepository.existsByNameAndUserIsNull(request.getName())) {
+            throw new ConflictException("Категория с таким имененм уже существует" + request.getName());
+        }
+        Category category = categoryMapper.toEntity(request);
+        Category saved = categoryRepository.save(category);
+        return categoryMapper.toResponse(saved);
+    }
+
+    @Transactional
+    public CategoryResponse createMy(Long userId, CategoryCreateRequest request) {
+        if (categoryRepository.existsForUserByName(request.getName(), userId)) {
+            throw new ConflictException("Личная категория с таким имененм уже существует: " + request.getName());
+        }
+        if (categoryRepository.existsByNameAndUserIsNull(request.getName())) {
+            throw new ConflictException("Общая категория с таким имененм уже существует: " + request.getName());
         }
         User user = userRepository.getReferenceById(userId);
         Category category = categoryMapper.toEntity(request);
@@ -54,14 +67,32 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryResponse getOne(Long categoryId) {
+    public CategoryResponse getCommonOne(Long categoryId) {
         Category category = categoryRepository.findByIdWithRecipes(categoryId).orElseThrow(() ->
-                new ResourceNotFoundException("Category with such id not found: " + categoryId));
+                new ResourceNotFoundException("Категория с таким id не найдена " + categoryId));
         return categoryMapper.toResponse(category);
     }
 
     @Transactional(readOnly = true)
-    public Page<CategoryPageResponse> getListPaginated(Long userId, Pageable pageable) {
+    public CategoryResponse getMyOne(Long userId, Long categoryId) {
+        Category category = categoryRepository.findByIdWithRecipes(categoryId).orElseThrow(() ->
+                new ResourceNotFoundException("Категория с таким id не найдена " + categoryId));
+        if (!category.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("Вы можете просматривать только свои собственные категории");
+        }
+        return categoryMapper.toResponse(category);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CategoryPageResponse> getCommonListPaginated(Pageable pageable) {
+        pageableHelper.validateSortFields(pageable.getSort(), ALLOWED_SORT_FIELDS);
+        Pageable stablePageable = pageableHelper.addFallbackSort(pageable);
+        Page<Category> categoryPage = categoryRepository.findAllActivePaginated(stablePageable);
+        return categoryPage.map(categoryMapper::toPageResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CategoryPageResponse> getMyListPaginated(Long userId, Pageable pageable) {
         pageableHelper.validateSortFields(pageable.getSort(), ALLOWED_SORT_FIELDS);
         Pageable stablePageable = pageableHelper.addFallbackSort(pageable);
         Page<Category> categoryPage = categoryRepository.findAllActivePaginatedForUser(userId,  stablePageable);
@@ -69,7 +100,15 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryResponse> getList(Long userId) {
+    public List<CategoryResponse> getCommonList() {
+        return categoryRepository.findAllActiveCommon()
+                .stream()
+                .map(categoryMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> getMyList(Long userId) {
         return categoryRepository.findAllActiveForUser(userId)
                 .stream()
                 .map(categoryMapper::toResponse)
@@ -77,15 +116,21 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponse update(Long userId, Long categoryId, CategoryUpdateRequest request) {
+    public CategoryResponse updateMy(Long userId, Long categoryId, CategoryUpdateRequest request) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
-                new ResourceNotFoundException("Category with such id not found: " + categoryId));
-        if (categoryRepository.existsByName(request.getName())) {
-            throw new ConflictException("Category with such name already exists: " + request.getName());
+                new ResourceNotFoundException("Категория с таким id не найдена: " + categoryId));
+
+        if (category.getUser() == null) {
+            throw new AccessDeniedException("Общую категорию может обновлять только админ");
+        }
+        if (!category.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("Можно обновлять только свои категории");
         }
 
-        userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found with id: " + userId));
+        if (categoryRepository.isNameTaken(
+                request.getName(), userId, categoryId)) {
+            throw new ConflictException("Категория с таким названием уже существует: " + request.getName());
+        }
 
         categoryMapper.update(request, category);
         Category categorySaved = categoryRepository.save(category);
@@ -93,25 +138,46 @@ public class CategoryService {
     }
 
     @Transactional
-    public void deleteSoft(Long userId, Long categoryId, Long categoryIdForMove) {
+    public CategoryResponse updateCommon(Long categoryId, CategoryUpdateRequest request) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
-                new ResourceNotFoundException("Category with such id not found: " + categoryId));
-        Category categoryForMove = categoryRepository.findById(categoryIdForMove).orElseThrow(() ->
-                new ResourceNotFoundException("Category with such id not found: " + categoryId));
+                new ResourceNotFoundException("Категория с таким id не найдена: " + categoryId));
+        if (categoryRepository.existsByName(request.getName())) {
+            throw new ConflictException("Категория с таким названием уже существует: " + request.getName());
+        }
+
+        categoryMapper.update(request, category);
+        Category categorySaved = categoryRepository.save(category);
+        return categoryMapper.toResponse(categorySaved);
+    }
+
+    @Transactional
+    public void deleteMySoft(Long userId, Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
+                new ResourceNotFoundException("Категория с таким id не найдена: " + categoryId));
         userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException("User not found with id: " + userId));
+                () -> new ResourceNotFoundException("Пользователь не найден с таким id: " + userId));
 
-        if (categoryId.equals(categoryIdForMove)) {
-            throw new InvalidRequestException("You can not move to the same category");
+        if (category.getUser() == null) {
+            throw new AccessDeniedException("Общую категорию может удалять только админ");
         }
-        if (!category.getUser().getId().equals(userId) || !categoryForMove.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("You can interact with only your own categories");
+        if (!category.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("Вы можете удалять только свои собственные категории");
         }
-        if (category.isDeleted() || categoryForMove.isDeleted()) {
-            throw new ConflictException("Category is already deleted");
+        if (category.isDeleted()) {
+            throw new ConflictException("Категория уже удалена");
         }
 
-        recipeRepository.moveRecipesToCategory(categoryId, categoryIdForMove);
+        category.setDeletedAt(Instant.now());
+    }
+
+    public void deleteCommonSoft(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
+                new ResourceNotFoundException("Категория с таким id не найдена: " + categoryId));
+
+        if (category.isDeleted()) {
+            throw new ConflictException("Категория уже удалена");
+        }
+
         category.setDeletedAt(Instant.now());
     }
 }

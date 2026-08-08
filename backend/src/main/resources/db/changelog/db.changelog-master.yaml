@@ -9,3 +9,7 @@ databaseChangeLog:
       file: db/changelog/changes/004-create-refresh-tokens-table.sql
   - include:
       file: db/changelog/changes/005-create-password-reset-tokens-table.sql
+  - include:
+      file: db/changelog/changes/006-alter-recipes-description-fields.sql
+  - include:
+      file: db/changelog/changes/007-alter-recipe-category-connection.sql

@@ -10,13 +10,15 @@ export function useRecipesFormValidation() {
         form,
         handleSubmit,
         control,
-        resetForm
+        resetForm,
     } = useFormWithValidation<RecipeFormData>({
         initialValues: {
             name: '',
+            shortDescription: '',
             description: '',
             externalLink: '',
             categoryId: undefined,
+            personalCategoryIds: undefined,
         },
         validationSchema: {
             name: {
@@ -30,15 +32,26 @@ export function useRecipesFormValidation() {
             },
 
             externalLink: {
-                pattern: {
-                    value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/i,
-                    message: 'Некорректный формат URL',
+                validate: (val) => {
+                    const value = val?.toString();
+                    if (!value) return true; // необязательное поле
+                    try {
+                        new URL(value);
+                        return true;
+                    } catch {
+                        return 'Некорректный формат URL';
+                    }
                 },
                 maxLength: { value: 500, message: 'Ссылка слишком длинная' },
             },
 
             description: {
+                required: "Обязательное поле",
                 maxLength: { value: 2000, message: 'Описание слишком длинное' },
+            },
+
+            shortDescription: {
+                maxLength: { value: 150, message: 'Краткое описание слишком длинное' },
             },
         },
     });

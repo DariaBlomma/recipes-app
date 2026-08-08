@@ -1,18 +1,33 @@
-import {useState} from "react";
 import { RecipesList } from "../../widgets/list/RecipesList.tsx";
-import { RecipesFilters } from "@/recipes/widgets/RecipesFilters.tsx";
+import { RecipesFilters } from "../../widgets/RecipeFilters/RecipesFilters.tsx";
 import { BaseButton } from "@/shared/form-elems/BaseButton/BaseButton.tsx";
 import styles from "./RecipesListView.module.scss";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useRecipes } from "@/recipes/hooks/useRecipes.ts";
-import {clsx} from "clsx";
+import { clsx } from "clsx";
+
+interface RecipeSearch {
+    categoryId?: number;
+    personalCategoryIds?: number[];
+}
 
 export function RecipesListView() {
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
-
-    const { recipes, hasNextPage, loadMore, isFetchingNextPage } = useRecipes(selectedCategoryId);
-
+    const search = useSearch({ strict: false }) as RecipeSearch;
     const navigate = useNavigate();
+
+    const { recipes, hasNextPage, loadMore, isFetchingNextPage } = useRecipes({
+        categoryId: search.categoryId,
+        personalCategoryIds: search.personalCategoryIds,
+    });
+
+    const updateFilters = (updates: Partial<RecipeSearch>) => {
+        navigate({
+            to: ".",
+            search: (prev: RecipeSearch) => ({ ...prev, ...updates }),
+            replace: true,
+        });
+    };
+
     const redirectToForm = () => {
         navigate({ to: "/recipes/create" });
     };
@@ -22,8 +37,12 @@ export function RecipesListView() {
             <BaseButton onClick={redirectToForm}>Создать рецепт</BaseButton>
 
             <RecipesFilters
-                selectedCategoryId={selectedCategoryId}
-                onCategoryChange={setSelectedCategoryId}
+                selectedCategoryId={search.categoryId}
+                selectedPersonalCategoryIds={search.personalCategoryIds}
+                onCategoryChange={(categoryId) => updateFilters({ categoryId })}
+                onPersonalCategoriesChange={(personalCategoryIds) =>
+                    updateFilters({ personalCategoryIds })
+                }
             />
 
             <RecipesList
@@ -31,7 +50,6 @@ export function RecipesListView() {
                 hasNextPage={hasNextPage}
                 loadMore={loadMore}
                 isFetchingNextPage={isFetchingNextPage}
-                filterCategoryId={selectedCategoryId}
             />
         </div>
     );

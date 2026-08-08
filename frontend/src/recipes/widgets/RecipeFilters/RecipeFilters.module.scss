@@ -1,0 +1,10 @@
+.filters {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.filters > * {
+  flex: 1;
+  min-width: 0;
+}
