@@ -13,7 +13,7 @@ export function HeaderNav(): JSX.Element {
 
     return (
         <nav className={styles.headerNav}>
-            <Link to="/recipes" className={`${styles.navItem} ${isRecipesActive ? styles.active : ""}`}>
+            <Link to="/recipes" search={{}} className={`${styles.navItem} ${isRecipesActive ? styles.active : ""}`}>
                 <span className={styles.icon}>
                     <IconRecipes/>
                 </span>
