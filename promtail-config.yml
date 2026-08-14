@@ -5,9 +5,10 @@ server:
 positions:
   filename: /tmp/positions.yaml
 
-# Куда отправляем логи (берем данные из .env)
+# Отправляем логи в ЛОКАЛЬНЫЙ Loki (без авторизации!)
 clients:
-  - url: https://${GRAFANA_LOKI_USERNAME}:${GRAFANA_LOKI_API_KEY}@${GRAFANA_LOKI_HOST}/loki/api/v1/push
+  - url: http://loki:3100/loki/api/v1/push
+
 scrape_configs:
   - job_name: recipe-backend
     static_configs:
@@ -19,7 +20,6 @@ scrape_configs:
           # Откуда читаем логи (берем путь из .env)
           __path__: ${LOG_PATH}/*.log
 
-    # Парсинг JSON-логов, чтобы в Grafana можно было искать по полям
     pipeline_stages:
       - json:
           expressions:
