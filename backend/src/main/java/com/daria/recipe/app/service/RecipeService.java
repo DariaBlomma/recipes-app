@@ -14,16 +14,19 @@ import com.daria.recipe.app.mapper.RecipeMapper;
 import com.daria.recipe.app.repository.CategoryRepository;
 import com.daria.recipe.app.repository.RecipeRepository;
 import com.daria.recipe.app.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
@@ -41,31 +44,32 @@ public class RecipeService {
     @Transactional
     public RecipeResponse createRecipe(Long userId, RecipeCreateRequest createRequest) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException( "Пользователь  с таким id не найден: " + userId));
+                () -> new ResourceNotFoundException("Пользователь с таким id не найден: " + userId));
         Category commonCategory = categoryRepository
                 .findById(createRequest.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Категория с таким id не найдена:" + createRequest.getCategoryId()
+                        "Категория с таким id не найдена: " + createRequest.getCategoryId()
                 ));
 
-       Recipe recipe = recipeMapper.toEntity(createRequest);
-       recipe.setCategory(commonCategory);
-       recipe.setUser(user);
+        Recipe recipe = recipeMapper.toEntity(createRequest);
+        recipe.setCategory(commonCategory);
+        recipe.setUser(user);
 
         if (createRequest.getPersonalCategoryIds() != null && !createRequest.getPersonalCategoryIds().isEmpty()) {
             List<Category> personalCategories = categoryRepository
                     .findAllActiveByIdsForActiveUser(createRequest.getPersonalCategoryIds(), userId);
 
             if (personalCategories.size() != createRequest.getPersonalCategoryIds().size()) {
-                throw new ResourceNotFoundException(
-                        "Одна из личных категорий не найдена или не принадлежит вам");
+                log.warn("Попытка создания рецепта с невалидными личными категориями: userId={}, categoryIds={}", userId, createRequest.getPersonalCategoryIds());
+                throw new ResourceNotFoundException("Одна из личных категорий не найдена или не принадлежит вам");
             }
 
             recipe.setPersonalCategories(personalCategories);
         }
 
-       Recipe savedRecipe = recipeRepository.save(recipe);
-       return recipeMapper.toResponse(savedRecipe);
+        Recipe savedRecipe = recipeRepository.save(recipe);
+        log.info("Создан рецепт: userId={}, recipeId={}, categoryId={}", userId, savedRecipe.getId(), savedRecipe.getCategory().getId());
+        return recipeMapper.toResponse(savedRecipe);
     }
 
     @Transactional(readOnly = true)
@@ -102,12 +106,14 @@ public class RecipeService {
     }
 
     @Transactional
-    public RecipeResponse putRecipe (Long userId, Long recipeId, RecipeUpdateRequest request) {
+    public RecipeResponse putRecipe(Long userId, Long recipeId, RecipeUpdateRequest request) {
         userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found with id: " + userId));
         Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(
                 () -> new ResourceNotFoundException("Recipe not found with id: " + recipeId));
+
         if (!recipe.getUser().getId().equals(userId)) {
+            log.warn("Попытка редактирования чужого рецепта: userId={}, recipeId={}", userId, recipeId);
             throw new AccessDeniedException("You can edit only your own recipes");
         }
 
@@ -118,7 +124,7 @@ public class RecipeService {
             Category category = categoryRepository
                     .findById(requestCategoryId)
                     .orElseThrow(() -> new ResourceNotFoundException(
-                            "Category not found with id:" + requestCategoryId
+                            "Category not found with id: " + requestCategoryId
                     ));
             recipe.setCategory(category);
         }
@@ -131,8 +137,8 @@ public class RecipeService {
                         .findAllActiveByIdsForActiveUser(request.getPersonalCategoryIds(), userId);
 
                 if (personalCategories.size() != request.getPersonalCategoryIds().size()) {
-                    throw new ResourceNotFoundException(
-                            "Одна из личных категорий не найдена или не принадлежит вам");
+                    log.warn("Попытка обновления рецепта с невалидными личными категориями: userId={}, recipeId={}, categoryIds={}", userId, recipeId, request.getPersonalCategoryIds());
+                    throw new ResourceNotFoundException("Одна из личных категорий не найдена или не принадлежит вам");
                 }
 
                 recipe.getPersonalCategories().clear();
@@ -141,6 +147,7 @@ public class RecipeService {
         }
 
         Recipe savedRecipe = recipeRepository.save(recipe);
+        log.info("Обновлен рецепт: userId={}, recipeId={}", userId, recipeId);
         return recipeMapper.toResponse(savedRecipe);
     }
 
@@ -151,13 +158,18 @@ public class RecipeService {
 
         userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found with id: " + userId));
+
         if (!recipe.getUser().getId().equals(userId)) {
+            log.warn("Попытка удаления чужого рецепта: userId={}, recipeId={}", userId, recipeId);
             throw new AccessDeniedException("You can delete only your own recipes");
         }
 
         if (recipe.isDeleted()) {
+            log.warn("Попытка повторного удаления рецепта: userId={}, recipeId={}", userId, recipeId);
             throw new ConflictException("Recipe is already deleted");
         }
+
         recipe.setDeletedAt(Instant.now());
+        log.info("Удален (soft) рецепт: userId={}, recipeId={}", userId, recipeId);
     }
 }

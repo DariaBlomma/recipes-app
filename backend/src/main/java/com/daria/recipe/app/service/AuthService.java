@@ -13,6 +13,7 @@ import com.daria.recipe.app.repository.PasswordResetTokenRepository;
 import com.daria.recipe.app.repository.UserRepository;
 import com.daria.recipe.app.security.AccessTokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -39,6 +41,7 @@ public class AuthService {
     public AuthResponse signUp(SignUpRequest request) {
         UserResponse userResponse = userService.create(request);
         UUID refreshToken = refreshTokenService.createRefreshToken(userResponse.getId());
+        log.info("Регистрация пользователя: username='{}', email='{}', id={}", userResponse.getUserName(), userResponse.getEmail(), userResponse.getId());
         return buildAuthResponse(userResponse, refreshToken);
     }
 
@@ -46,10 +49,12 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         UserResponseWithPassword user = userService.getMeWithPassword(request.getUserName());
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("Неудачная попытка входа: username='{}'", request.getUserName());
             throw new UnauthorizedException("Неверный логин или пароль");
         }
 
         UUID refreshToken = refreshTokenService.rotateRefreshToken(user.getId());
+        log.info("Успешный вход пользователя: username='{}', id={}", user.getUserName(), user.getId());
         return buildAuthResponse(userMapper.fromWithPasswordToResponse(user), refreshToken);
     }
 
@@ -59,12 +64,14 @@ public class AuthService {
                 () -> new ResourceNotFoundException("Пользователь не найден или удален: " + userId));
         refreshTokenService.verifyRefreshToken(request.refreshToken());
         UUID refresh = refreshTokenService.rotateRefreshToken(userId);
+        log.info("Обновление токенов пользователя: id={}", userId);
         return buildAuthResponse(userMapper.toResponse(user), refresh);
     }
 
     @Transactional
     public void logout(Long userId) {
         refreshTokenService.revokeRefreshToken(userId);
+        log.info("Выход пользователя: id={}", userId);
     }
 
     @Transactional
@@ -82,6 +89,7 @@ public class AuthService {
             passwordResetTokenRepository.save(resetToken);
 
             emailService.sendPasswordResetEmail(user.getEmail(), resetToken.getToken());
+            log.info("Запрос восстановления пароля отправлен для email: {}", request.getEmail());
         });
     }
 
@@ -92,6 +100,7 @@ public class AuthService {
 
         if (Instant.now().isAfter(resetToken.getExpiresAt())) {
             passwordResetTokenRepository.delete(resetToken);
+            log.warn("Попытка использования просроченного токена восстановления");
             throw new IllegalArgumentException("Срок действия токена истек. Запросите восстановление пароля заново.");
         }
 
@@ -100,6 +109,7 @@ public class AuthService {
         userRepository.save(user);
 
         passwordResetTokenRepository.delete(resetToken);
+        log.info("Пароль успешно изменен для пользователя: id={}", user.getId());
     }
 
     private AuthResponse buildAuthResponse(UserResponse user, UUID refreshToken) {

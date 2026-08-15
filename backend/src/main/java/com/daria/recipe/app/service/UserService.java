@@ -9,10 +9,12 @@ import com.daria.recipe.app.exception.ResourceNotFoundException;
 import com.daria.recipe.app.mapper.UserMapper;
 import com.daria.recipe.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -23,6 +25,7 @@ public class UserService {
     @Transactional
     public UserResponse create(SignUpRequest request) {
         if (userRepository.existsByUserNameAndDeletedAtIsNull(request.getUserName())) {
+            log.warn("Попытка регистрации с существующим именем пользователя: username='{}'", request.getUserName());
             throw new ConflictException("User with such name already exists");
         }
 
@@ -31,6 +34,7 @@ public class UserService {
         userForSaving.setPassword(encodedPassword);
 
         User savedUser = userRepository.save(userForSaving);
+        log.info("Успешно создан новый пользователь: username='{}', id={}", savedUser.getUserName(), savedUser.getId());
         return userMapper.toResponse(savedUser);
     }
 

@@ -4,11 +4,14 @@ import com.daria.recipe.app.config.AppConfig;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import java.io.UnsupportedEncodingException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -24,6 +27,7 @@ public class EmailService {
             try {
                 helper.setFrom(appConfig.getMailFrom(), "Recipe App");
             } catch (UnsupportedEncodingException e) {
+                log.error("Ошибка кодировки имени отправителя для email: {}", toEmail, e);
                 throw new RuntimeException("Ошибка кодировки имени отправителя", e);
             }
             helper.setSubject("Восстановление пароля в Recipe App");
@@ -55,8 +59,10 @@ public class EmailService {
             helper.setText(htmlContent, true);
             mailSender.send(message);
 
+            log.info("Письмо для восстановления пароля успешно отправлено на email: {}", toEmail);
+
         } catch (MessagingException e) {
-            // todo: add logger logger.error("Failed to send email", e);
+            log.error("Не удалось отправить письмо для восстановления пароля на email: {}", toEmail, e);
             throw new RuntimeException("Не удалось отправить письмо: " + e.getMessage(), e);
         }
     }

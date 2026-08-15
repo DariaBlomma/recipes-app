@@ -7,12 +7,15 @@ import com.daria.recipe.app.exception.ResourceNotFoundException;
 import com.daria.recipe.app.repository.RefreshTokenRepository;
 import com.daria.recipe.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
@@ -34,6 +37,7 @@ public class RefreshTokenService {
                 .build();
 
         RefreshToken saved = refreshTokenRepository.save(refreshToken);
+        log.info("Создан новый refresh токен для пользователя: userId={}", userId);
         return saved.getToken();
     }
 
@@ -42,17 +46,23 @@ public class RefreshTokenService {
         try {
             tokenUuid = UUID.fromString(tokenValue);
         } catch (IllegalArgumentException e) {
+            log.warn("Попытка использования refresh токена с невалидным форматом");
             throw new InvalidTokenException("Invalid refresh token format");
         }
 
         RefreshToken refreshToken = refreshTokenRepository.findByToken(tokenUuid)
-                .orElseThrow(() -> new InvalidTokenException("Refresh token not found"));
+                .orElseThrow(() -> {
+                    log.warn("Попытка использования несуществующего refresh токена");
+                    return new InvalidTokenException("Refresh token not found");
+                });
 
         if (refreshToken.isRevoked()) {
+            log.warn("Попытка использования отозванного refresh токена");
             throw new InvalidTokenException("Refresh token has been revoked");
         }
 
         if (refreshToken.getExpiresAt().isBefore(Instant.now())) {
+            log.warn("Попытка использования просроченного refresh токена");
             throw new InvalidTokenException("Refresh token has expired");
         }
 
@@ -66,15 +76,18 @@ public class RefreshTokenService {
         );
         refreshTokenRepository.findByUserId(userId)
                 .ifPresent(refreshTokenRepository::delete);
+        log.info("Refresh токен отозван для пользователя: userId={}", userId);
     }
 
     public UUID rotateRefreshToken(Long userId) {
+        log.info("Выполнена ротация refresh токена для пользователя: userId={}", userId);
         revokeRefreshToken(userId);
         return createRefreshToken(userId);
     }
 
     @Transactional
     public void cleanExpiredTokens() {
+        log.info("Запущена плановая очистка просроченных refresh токенов");
         refreshTokenRepository.deleteByExpiresAtBefore(Instant.now());
     }
 }
