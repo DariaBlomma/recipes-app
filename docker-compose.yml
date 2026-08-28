@@ -7,9 +7,9 @@ services:
       POSTGRES_PASSWORD: recipepass
       POSTGRES_DB: recipedb
     ports:
-      - "5433:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_${SPRING_PROFILES_ACTIVE:-prod}_data:/var/lib/postgresql/data
     restart: unless-stopped
 
   backend:
@@ -81,7 +81,8 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_prod_data:
+  postgres_dev_data:
   backend-logs:
   loki-data:
   grafana-data:
