@@ -35,4 +35,4 @@ jobs:
         run: |
           echo "❌ Деплой не удался! Выводим последние 100 строк логов контейнера:"
           cd /home/user/Programming/RecipeApp/recipes-app
-          docker compose logs --tail=100 recipe-backend
+          docker compose logs --tail=100 backend
