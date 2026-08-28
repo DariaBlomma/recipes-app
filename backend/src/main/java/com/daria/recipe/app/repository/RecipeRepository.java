@@ -37,7 +37,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("""
     SELECT r FROM Recipe r
     WHERE r.deletedAt IS NULL
-      AND (r.user.id = :userId OR r.category.user IS NULL)
+      AND r.user.id = :userId
       AND (:categoryId IS NULL OR r.category.id = :categoryId)
       AND (:hasPersonalFilter = false OR EXISTS (
           SELECT pc.id FROM Recipe rec JOIN rec.personalCategories pc
