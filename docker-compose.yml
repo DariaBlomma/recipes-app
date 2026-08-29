@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: recipepass
       POSTGRES_DB: recipedb
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_${SPRING_PROFILES_ACTIVE:-prod}_data:/var/lib/postgresql/data
     restart: unless-stopped
